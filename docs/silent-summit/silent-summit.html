@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>THE SENTINEL — Landscape 00001</title>
+<title>SILENT SUMMIT — Landscape 00001</title>
 <style>
 :root{color-scheme:dark;--mint:#b5f3b1;--dim:#739c88;--line:#365347}*{box-sizing:border-box}body{margin:0;overflow:hidden;background:#090f16;color:var(--mint);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}canvas#world{display:block;width:100vw;height:100vh}#hud{position:fixed;inset:0;pointer-events:none;padding:30px 36px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(#07101899,transparent 23%,transparent 70%,#071018aa)}header{display:flex;justify-content:space-between;align-items:flex-start}.eyebrow{font-size:10px;letter-spacing:3px;color:var(--dim)}h1{font-size:27px;letter-spacing:7px;margin:8px 0 7px;font-weight:500}.sub{color:var(--dim);font-size:10px;letter-spacing:2px}.right{text-align:right}.energyValue{font-size:28px;margin:6px 0}.energyValue small{font-size:12px;color:var(--dim)}#cells{display:flex;gap:4px;justify-content:flex-end}.cell{width:9px;height:18px;background:#172e29;border:1px solid #426454}.cell.on{background:var(--mint);box-shadow:0 0 8px #a6f8b522}#scan{margin-top:15px;letter-spacing:2px}#scan.danger{color:#ff7c69;text-shadow:0 0 15px #ff654a}#cross{position:absolute;left:50%;top:50%;width:22px;height:22px;transform:translate(-50%,-50%);background:linear-gradient(var(--mint),var(--mint)) center/1px 7px no-repeat,linear-gradient(var(--mint),var(--mint)) center/7px 1px no-repeat;border:1px solid #b5f3b144;border-radius:50%}#target{position:absolute;top:calc(50% + 28px);left:50%;transform:translateX(-50%);text-align:center;font-size:10px;letter-spacing:1px;white-space:nowrap;color:#d1e8d6}#toast{position:absolute;top:28%;width:calc(100% - 72px);text-align:center;color:#e5eec9;letter-spacing:1px;text-shadow:0 2px 5px #000;opacity:0;transition:opacity .2s}.bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:20px}.panel{border-top:1px solid var(--line);padding-top:12px}.objective{max-width:380px;line-height:1.8}.objective strong{display:block;letter-spacing:2px;font-weight:400;margin-bottom:6px}.objective span{color:#9bb7a8}#map{width:126px;height:126px;border:1px solid var(--line);margin-bottom:8px;background:#071018}.controls{display:flex;gap:16px;flex-wrap:wrap;max-width:620px;margin-top:15px;color:#9bb7a8;line-height:2}kbd{font:inherit;color:#e0f0ce;border:1px solid #476258;padding:3px 5px;border-radius:2px}#coords{font-size:10px;line-height:1.8;letter-spacing:1px}.footer{font-size:9px;color:#698c7c;letter-spacing:2px;margin-top:16px}#shade{position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 160px #0008}#flash{position:fixed;inset:0;background:#c7ffcc;opacity:0;pointer-events:none;transition:opacity .45s}#modal{position:fixed;inset:0;display:grid;place-items:center;background:#040d12c9;backdrop-filter:blur(5px);padding:20px}#modal.hidden{display:none}.card{max-width:630px;padding:38px;border:1px solid #496f5c;background:#0a161ce8;box-shadow:0 30px 100px #0008}.card h2{font-weight:400;letter-spacing:6px;font-size:30px;margin:14px 0 20px}.card p{color:#a8bdb0;line-height:1.9}.card .steps{border-left:1px solid #52775e;padding-left:18px;margin:24px 0;line-height:2;color:#c9dbbe}button{font:inherit;border:1px solid #a9d9a2;background:#b5f3b1;color:#10221a;letter-spacing:2px;padding:14px 20px;cursor:pointer}button:hover{background:#e1ffd6}#pauseHint{position:absolute;top:118px;left:36px;color:#88a794;font-size:10px}.scanlines{position:fixed;inset:0;pointer-events:none;opacity:.16;background:repeating-linear-gradient(transparent 0px,transparent 3px,#000 4px)}@media(max-width:700px){#hud{padding:18px}h1{font-size:19px;letter-spacing:4px}.controls{gap:9px;font-size:10px}.objective{max-width:65%;font-size:10px}#map{width:90px;height:90px}.card{padding:24px}.card h2{font-size:24px}#pauseHint{left:18px}.footer{letter-spacing:0}.bottom{gap:10px}}
 #audioToggle{pointer-events:auto;background:transparent;color:var(--mint);border-color:var(--line);font-size:10px;padding:7px 9px;margin-top:12px;letter-spacing:1px}#audioToggle:hover{background:#1b3029}#audioToggle:focus-visible{outline:2px solid var(--mint);outline-offset:3px}
@@ -19,12 +19,12 @@
 </style>
 </head>
 <body>
-<noscript><div style="position:fixed;inset:0;z-index:100;background:#09151e;color:#c8efbe;padding:12vh 10vw;font:16px/1.8 monospace"><h2>OPEN THE SAVED GAME IN YOUR BROWSER</h2><p>This preview cannot run JavaScript. Download sentinal9.html, then open the saved file in Safari or Chrome with JavaScript enabled.</p></div></noscript>
+<noscript><div style="position:fixed;inset:0;z-index:100;background:#09151e;color:#c8efbe;padding:12vh 10vw;font:16px/1.8 monospace"><h2>OPEN THE SAVED GAME IN YOUR BROWSER</h2><p>This preview cannot run JavaScript. Download silent-summit.html, then open the saved file in Safari or Chrome with JavaScript enabled.</p></div></noscript>
 <canvas id="world" tabindex="0" aria-label="First-person landscape view"></canvas><div id="shade"></div><div class="scanlines"></div><div id="flash"></div><div id="warpVeil"></div><div id="threatVeil"></div>
 <div id="hud">
-<header><div><div class="eyebrow">A LANDSCAPE OF WATCHFUL SILENCE</div><h1>THE SENTINEL</h1><div id="landscapeLabel" class="sub">LANDSCAPE 00001 / 10000</div></div><div class="right"><div class="eyebrow">ENERGY RESERVE</div><div class="energyValue"><span id="energy">10</span><small> / 15 EU</small></div><div id="cells"></div><div id="scan">● SAFE</div><div id="tick" class="sub" style="margin-top:8px">NEXT SWEEP 3.0s</div><button id="audioToggle" type="button" aria-pressed="true" aria-label="Mute audio (M)">M · AUDIO READY</button></div></header>
+<header><div><div class="eyebrow">A LANDSCAPE OF WATCHFUL SILENCE</div><h1>SILENT SUMMIT</h1><div id="landscapeLabel" class="sub">LANDSCAPE 00001 / 10000</div></div><div class="right"><div class="eyebrow">ENERGY RESERVE</div><div class="energyValue"><span id="energy">10</span><small> / 15 EU</small></div><div id="cells"></div><div id="scan">● SAFE</div><div id="tick" class="sub" style="margin-top:8px">NEXT SWEEP 3.0s</div><button id="audioToggle" type="button" aria-pressed="true" aria-label="Mute audio (M)">M · AUDIO READY</button></div></header>
 <div id="pauseHint">CLICK LANDSCAPE TO CAPTURE MOUSE · ESC PAUSES</div><div id="cross"></div><div id="target">AWAITING SIGNAL</div><div id="blueprint"></div><div id="energyGain" aria-live="polite"></div><div id="toast"></div>
-<div class="bottom"><div class="objective panel"><strong id="phase">01 / ASCEND THE LANDSCAPE</strong><span id="objective">Build a boulder. Place a synthoid on top. Transfer, reclaim your old shell, and climb.</span><div class="controls"><span><kbd>1 2 3</kbd> Preview</span><span><kbd>B</kbd> Boulder · 2</span><span><kbd>T</kbd> Tree · 1</span><span><kbd>R</kbd> Synthoid · 3</span><span><kbd>A</kbd> Absorb</span><span><kbd>Q</kbd> Transfer</span><span><kbd>H</kbd> Hyperspace · 3</span><span><kbd>← ↑ ↓ →</kbd> Look</span><span><kbd>P</kbd> Pause</span><span><kbd>M</kbd> Audio</span><span><kbd>V</kbd> Map</span><span><kbd>O</kbd> Settings</span><span><kbd>L</kbd> Landscapes</span></div><div class="footer">INSPIRED BY GEOFF CRAMMOND’S 1986 CLASSIC · UNOFFICIAL PROTOTYPE</div></div><div class="right"><button id="mapButton" type="button" aria-label="Open tactical map (V)"><canvas id="map" width="252" height="252" aria-label="Landscape minimap"></canvas><span>EXPAND MAP · V</span></button><div id="coords"></div><div id="watcherStatus" class="sub" style="margin-top:6px"></div><div id="runStats" class="sub" style="margin-top:6px"></div></div></div>
+<div class="bottom"><div class="objective panel"><strong id="phase">01 / ASCEND THE LANDSCAPE</strong><span id="objective">Build a boulder. Place an avatar on top. Transfer, reclaim your old shell, and climb.</span><div class="controls"><span><kbd>1 2 3</kbd> Preview</span><span><kbd>B</kbd> Boulder · 2</span><span><kbd>T</kbd> Tree · 1</span><span><kbd>R</kbd> Avatar · 3</span><span><kbd>A</kbd> Absorb</span><span><kbd>Q</kbd> Transfer</span><span><kbd>H</kbd> Hyperspace · 3</span><span><kbd>← ↑ ↓ →</kbd> Look</span><span><kbd>P</kbd> Pause</span><span><kbd>M</kbd> Audio</span><span><kbd>V</kbd> Map</span><span><kbd>O</kbd> Settings</span><span><kbd>L</kbd> Landscapes</span></div><div class="footer">A FREE BROWSER GAME BY TECH REALITY · PROTOTYPE</div></div><div class="right"><button id="mapButton" type="button" aria-label="Open tactical map (V)"><canvas id="map" width="252" height="252" aria-label="Landscape minimap"></canvas><span>EXPAND MAP · V</span></button><div id="coords"></div><div id="watcherStatus" class="sub" style="margin-top:6px"></div><div id="runStats" class="sub" style="margin-top:6px"></div></div></div>
 </div>
 <form id="levelSelect" class="level-controls" aria-label="Select landscape">
 <label for="levelInput">LANDSCAPE</label><button id="previousLevel" type="button" aria-label="Previous Level">← PREV</button>
@@ -33,14 +33,14 @@
 <span id="progressStatus" role="status"></span><span id="levelStatus" role="status">1–10,000 · SAME NUMBER, SAME WORLD</span><div class="tool-buttons"><button id="openMap" type="button">MAP · V</button><button id="openSettings" type="button">SETTINGS · O</button><button id="openBrowser" type="button">LANDSCAPES · L</button></div></form>
 <aside id="tutorialPanel" hidden aria-label="Guided training"><div class="eyebrow">GUIDED TRAINING · NO ENERGY DRAIN</div><h3 id="tutorialTitle"></h3><p id="tutorialText"></p><div id="tutorialDirection"></div><button id="skipTraining" type="button">SKIP TRAINING →</button></aside>
 <div id="utilityPanel" hidden role="dialog" aria-modal="true" aria-labelledby="utilityTitle">
-<div class="utility-card"><header class="utility-head"><div><div class="eyebrow">THE SENTINEL / REVISION 10</div><h2 id="utilityTitle">TACTICAL MAP</h2></div><button id="closeUtility" type="button" aria-label="Close panel">BACK · ESC</button></header>
+<div class="utility-card"><header class="utility-head"><div><div class="eyebrow">SILENT SUMMIT / REVISION 10</div><h2 id="utilityTitle">TACTICAL MAP</h2></div><button id="closeUtility" type="button" aria-label="Close panel">BACK · ESC</button></header>
 <nav class="utility-tabs" aria-label="Game tools"><button data-panel="map" type="button">MAP · V</button><button data-panel="settings" type="button">SETTINGS · O</button><button data-panel="browser" type="button">LANDSCAPES · L</button></nav>
-<section id="mapSection"><div class="expanded-map-layout"><div class="map-frame"><canvas id="expandedMap" width="768" height="768" role="img" aria-label="Height-shaded tactical map with your location, summit, shells, and watchers"></canvas></div><aside class="map-guide"><h3>READ THE LANDSCAPE</h3><div class="height-ramp"></div><div class="ramp-labels"><span>LOW VALLEY</span><span>HIGH PEAK</span></div><p>Lighter tiles are higher. Contour edges mark changes in elevation. North stays at the top.</p><ul class="map-key"><li><i class="dot player"></i>Your body &amp; facing</li><li><i class="diamond shell"></i>Abandoned shells</li><li><i class="square summit"></i>Sentinel / summit</li><li><i class="triangle guard"></i>Sentry &amp; facing</li><li><i class="square rock"></i>Boulder</li><li><i class="dot tree"></i>Tree</li></ul><p id="mapSummary"></p><p class="tool-note">Simulation paused. Use the map to plan your next transfer; terrain still blocks a watcher's gaze.</p></aside></div></section>
+<section id="mapSection"><div class="expanded-map-layout"><div class="map-frame"><canvas id="expandedMap" width="768" height="768" role="img" aria-label="Height-shaded tactical map with your location, summit, shells, and watchers"></canvas></div><aside class="map-guide"><h3>READ THE LANDSCAPE</h3><div class="height-ramp"></div><div class="ramp-labels"><span>LOW VALLEY</span><span>HIGH PEAK</span></div><p>Lighter tiles are higher. Contour edges mark changes in elevation. North stays at the top.</p><ul class="map-key"><li><i class="dot player"></i>Your body &amp; facing</li><li><i class="diamond shell"></i>Abandoned shells</li><li><i class="square summit"></i>Warden / summit</li><li><i class="triangle guard"></i>Lookout &amp; facing</li><li><i class="square rock"></i>Boulder</li><li><i class="dot tree"></i>Tree</li></ul><p id="mapSummary"></p><p class="tool-note">Simulation paused. Use the map to plan your next transfer; terrain still blocks a watcher's gaze.</p></aside></div></section>
 <section id="settingsSection" hidden><p class="tool-intro">Tune the view to suit your screen and mouse.</p><div class="settings-grid"><div class="setting-row"><label for="sensitivity">MOUSE SENSITIVITY <output id="sensitivityValue" for="sensitivity">100%</output></label><input id="sensitivity" type="range" min="25" max="300" step="5" value="100"><p>Lower values give finer aim. Arrow-key rotation stays consistent.</p></div><div class="setting-row"><label for="brightness">LANDSCAPE BRIGHTNESS <output id="brightnessValue" for="brightness">100%</output></label><input id="brightness" type="range" min="65" max="160" step="5" value="100"><p>Changes the landscape view while preserving HUD readability.</p></div><div class="setting-row"><label for="musicVolume">MUSIC VOLUME <output id="musicVolumeValue" for="musicVolume">30%</output></label><input id="musicVolume" type="range" min="0" max="100" step="5" value="30"><p>Your chosen music loops during play and pauses with the game. No music is bundled with this public edition.</p></div><div class="setting-row"><label for="effectsVolume">EFFECTS VOLUME <output id="effectsVolumeValue" for="effectsVolume">75%</output></label><input id="effectsVolume" type="range" min="0" max="100" step="5" value="75"><p>Build, absorb, transfer, and warning sounds. Headphones make watcher direction easier to hear.</p></div></div><button id="effectsOnly" type="button" class="secondary">EFFECTS ONLY · MUSIC OFF</button> <button id="resetSettings" type="button" class="secondary">RESTORE DEFAULT SETTINGS</button><div class="local-music"><label for="musicFile">YOUR SOUNDTRACK</label><input id="musicFile" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.oga,.flac,.opus,.webm"><button id="clearMusic" type="button" class="secondary" disabled>REMOVE MUSIC</button><p class="tool-note">Choose a music file from your device. It stays on your device and is never uploaded. Choose it again after reloading the game.</p></div><p id="musicTrackStatus" class="tool-note" role="status">Effects only. Choose your own music file above.</p><p id="settingsStatus" class="tool-note" role="status"></p></section>
 <section id="browserSection" hidden><div class="browser-tools"><label for="landscapeFilter">SHOW <select id="landscapeFilter"><option value="all">All landscapes</option><option value="completed">Cleared</option><option value="uncleared">Uncleared</option></select></label><form id="landscapeFind"><label for="landscapeJump">FIND LEVEL</label><input id="landscapeJump" type="number" min="1" max="10000" step="1" required placeholder="1–10000"><button type="submit">FIND</button></form></div><p id="browserSummary" role="status"></p><div id="landscapeGrid" class="landscape-grid"></div><footer class="browser-pagination"><button id="browserPrevious" type="button">← PREVIOUS</button><span id="browserPage" aria-live="polite"></span><button id="browserNext" type="button">NEXT →</button></footer><p class="tool-note">Play starts that landscape afresh. Records stay in this browser. Best time and fewest transfers are independent personal bests.</p></section>
 </div></div>
 
-<div id="modal"><div class="card"><div id="modalLevel" class="eyebrow">TACTICAL LANDSCAPE SIMULATION / 00001</div><h2 id="modalTitle">ONLY THE HIGH<br>GROUND IS SAFE.</h2><div id="modalBody"><p>You are a consciousness inside a synthoid. Across the valley, the Sentinel turns. If a watcher sees the ground beneath you, your energy drains. From landscape 10, extra sentries guard the ridges. Absorb them for 4 energy or hide from every active gaze.</p><div class="steps">01 &nbsp; Build and transfer to climb the terraces.<br>02 &nbsp; Rise above the peak and absorb the Sentinel.<br>03 &nbsp; Occupy its platform. Hyperspace to escape.</div><p>Choose a ghost preview with 1 (boulder), 2 (tree), or 3 (synthoid). Green means buildable; red explains what blocks placement. B / T / R build immediately. Aim at a surface or object. Bases must be visible to build or absorb. Shells can be entered wherever you can see them. Reclaim abandoned shells for energy. A boulder supports another boulder or a shell.</p><p style="font-size:10px">Mouse look: click landscape to lock, or drag to look. Arrow keys also rotate. No walking. Escape / P pauses. M mutes all audio. O opens separate music and effects volumes. Action and warning sounds are synthesized. In Settings (O), choose your own local music file; it is never uploaded. Music pauses with the game and resumes from the same position. The engine is included: no internet is needed. Save this HTML file, then open it directly in Safari or Chrome.</p></div><div class="modal-actions"><button id="nextLandscape" hidden>NEXT LANDSCAPE →</button><button id="begin">ENTER LANDSCAPE →</button><button id="tutorialStart" class="secondary">GUIDED TRAINING</button></div></div></div>
+<div id="modal"><div class="card"><div id="modalLevel" class="eyebrow">TACTICAL LANDSCAPE SIMULATION / 00001</div><h2 id="modalTitle">ONLY THE HIGH<br>GROUND IS SAFE.</h2><div id="modalBody"><p>You are a consciousness inside an avatar. Across the valley, the Warden turns. If a watcher sees the ground beneath you, your energy drains. From landscape 10, extra lookouts guard the ridges. Absorb them for 4 energy or hide from every active gaze.</p><div class="steps">01 &nbsp; Build and transfer to climb the terraces.<br>02 &nbsp; Rise above the peak and absorb the Warden.<br>03 &nbsp; Occupy its platform. Hyperspace to escape.</div><p>Choose a ghost preview with 1 (boulder), 2 (tree), or 3 (avatar). Green means buildable; red explains what blocks placement. B / T / R build immediately. Aim at a surface or object. Bases must be visible to build or absorb. Shells can be entered wherever you can see them. Reclaim abandoned shells for energy. A boulder supports another boulder or a shell.</p><p style="font-size:10px">Mouse look: click landscape to lock, or drag to look. Arrow keys also rotate. No walking. Escape / P pauses. M mutes all audio. O opens separate music and effects volumes. Action and warning sounds are synthesized. In Settings (O), choose your own local music file; it is never uploaded. Music pauses with the game and resumes from the same position. The engine is included: no internet is needed. Save this HTML file, then open it directly in Safari or Chrome.</p></div><div class="modal-actions"><button id="nextLandscape" hidden>NEXT LANDSCAPE →</button><button id="begin">ENTER LANDSCAPE →</button><button id="tutorialStart" class="secondary">GUIDED TRAINING</button></div></div></div>
 <!-- Bundled Three.js 0.160.1. License follows.
 The MIT License
 
@@ -241,8 +241,8 @@ class AudioManager {
     const front=(-dx*Math.sin(listener.yaw)-dz*Math.cos(listener.yaw))/h;
     return {pan:Math.max(-1,Math.min(1,pan)),attenuation:1/(1+d/22),cutoff:front<0?780:1800};
   }
-  sentinelTurn(position,listener,kind='sentinel'){
-    if(!this.canEffect())return;const {pan,attenuation,cutoff}=this.spatial(position,listener),pitch=kind==='sentry'?1.25:1;
+  wardenTurn(position,listener,kind='warden'){
+    if(!this.canEffect())return;const {pan,attenuation,cutoff}=this.spatial(position,listener),pitch=kind==='lookout'?1.25:1;
     this.tone({frequency:110*pitch,endFrequency:62,type:'square',duration:.024,volume:.15*attenuation,pan,cutoff});
     this.tone({frequency:440*pitch,endFrequency:120*pitch,type:'triangle',duration:.13,volume:.12*attenuation,pan,cutoff});
     this.noiseBurst({duration:.075,volume:.06*attenuation,pan,cutoff:500});
@@ -325,18 +325,18 @@ class RouteValidator {
     layout.objects=layout.objects.filter(o=>!reserved.has(o.index)||(o.type==='tree'&&near(spawnIndex).includes(o.index)&&heights[o.index]<=heights[spawnIndex]));
     layout.route=route;
     const rng=mulberry32(layout.level^0x53454e54),distance=(a,b)=>Math.hypot(a%size-b%size,Math.floor(a/size)-Math.floor(b/size));
-    const wanted=sentryCountForLevel(layout.level);
+    const wanted=lookoutCountForLevel(layout.level);
     const candidates=heights.map((h,index)=>({index,h,rank:rng()})).filter(c=>!reserved.has(c.index)&&distance(c.index,spawnIndex)>=6&&distance(c.index,peakIndex)>=3&&c.h<heights[peakIndex]);
     candidates.sort((a,b)=>(b.h+b.rank*2)-(a.h+a.rank*2));
-    layout.sentries=[];
+    layout.lookouts=[];
     for(const separation of [4,2])for(const c of candidates){
-      if(layout.sentries.length===wanted)break;
-      if(layout.sentries.some(s=>distance(s.index,c.index)<separation))continue;
+      if(layout.lookouts.length===wanted)break;
+      if(layout.lookouts.some(s=>distance(s.index,c.index)<separation))continue;
       const dx=spawnIndex%size-c.index%size,dz=Math.floor(spawnIndex/size)-Math.floor(c.index/size);
-      layout.sentries.push({index:c.index,angle:Math.atan2(-dx,-dz)+Math.PI,interval:layout.level<50?3.6:layout.level<200?3.3:layout.level<1000?3:2.7,phase:rng()*.8});
+      layout.lookouts.push({index:c.index,angle:Math.atan2(-dx,-dz)+Math.PI,interval:layout.level<50?3.6:layout.level<200?3.3:layout.level<1000?3:2.7,phase:rng()*.8});
     }
-    if(layout.sentries.length!==wanted)throw Error('Insufficient sentry positions for landscape '+layout.level);
-    const sentrySquares=new Set(layout.sentries.map(s=>s.index));layout.objects=layout.objects.filter(o=>!sentrySquares.has(o.index));
+    if(layout.lookouts.length!==wanted)throw Error('Insufficient lookout positions for landscape '+layout.level);
+    const lookoutSquares=new Set(layout.lookouts.map(s=>s.index));layout.objects=layout.objects.filter(o=>!lookoutSquares.has(o.index));
     layout.validation=this.validate(layout);if(!layout.validation.valid)throw Error('Landscape route failed validation: '+layout.validation.reason);
     return layout;
   }
@@ -346,12 +346,12 @@ class RouteValidator {
     // all decorative object footprints are narrower than a tile. One step is 1.4m, eyes 2.7m high.
     const {size,heights,spawnIndex,peakIndex,route}=layout,fail=reason=>({valid:false,reason});
     if(!route||route.path[0]!==spawnIndex||route.path.at(-1)!==route.staging)return fail('Disconnected route');
-    if(heights[peakIndex]!==Math.max(...heights))return fail('Sentinel is not on the highest tile');
+    if(heights[peakIndex]!==Math.max(...heights))return fail('Warden is not on the highest tile');
     if(heights[spawnIndex]>heights[peakIndex]-3)return fail('Starting tile is not low enough');
     const occupied=new Map(layout.objects.map(o=>[o.index,o.type]));
     if(occupied.has(spawnIndex))return fail('Starting tile occupied');
-    occupied.set(peakIndex,'sentinel');for(const s of layout.sentries||[]) {if(s.index===spawnIndex||occupied.has(s.index))return fail('Overlapping sentry');occupied.set(s.index,'sentry');}
-    const initialWatchers=[{index:peakIndex,angle:layout.sentinelAngle,interval:3,phase:0},...(layout.sentries||[])];
+    occupied.set(peakIndex,'warden');for(const s of layout.lookouts||[]) {if(s.index===spawnIndex||occupied.has(s.index))return fail('Overlapping lookout');occupied.set(s.index,'lookout');}
+    const initialWatchers=[{index:peakIndex,angle:layout.wardenAngle,interval:3,phase:0},...(layout.lookouts||[])];
     for(const watcher of initialWatchers){const dx=spawnIndex%size-watcher.index%size,dz=Math.floor(spawnIndex/size)-Math.floor(watcher.index/size),length=Math.hypot(dx,dz);if(!length||!Number.isFinite(watcher.angle)||watcher.phase<0||watcher.phase>=watcher.interval||(-Math.sin(watcher.angle)*dx-Math.cos(watcher.angle)*dz)/length>=Math.cos(Math.PI/8))return fail('Unsafe initial gaze');}
 
     let energy=10,minimum=10;const actions=[];
@@ -366,11 +366,11 @@ class RouteValidator {
       actions.push({action:'shell',index:to},{action:'transfer',index:to},{action:'reclaim',index:from});energy+=3;
     }
     if(!this.neighbors(route.staging,size).includes(route.approach)||!this.neighbors(route.approach,size).includes(peakIndex))return fail('Summit is not adjacent');
-    if(heights[route.staging]!==heights[route.approach]||heights[route.approach]*1.4+2<=heights[peakIndex]*1.4)return fail('Boulder cannot overtop Sentinel');
+    if(heights[route.staging]!==heights[route.approach]||heights[route.approach]*1.4+2<=heights[peakIndex]*1.4)return fail('Boulder cannot overtop Warden');
     if(occupied.has(route.approach)||occupied.has(route.staging))return fail('Summit approach occupied');
     if(energy<5)return fail('Insufficient summit construction energy');energy-=5;minimum=Math.min(minimum,energy);
     actions.push({action:'boulder',index:route.approach},{action:'raisedShell',index:route.approach},{action:'transfer',index:route.approach},{action:'absorb',index:peakIndex});
-    if(energy+4>15)return fail('Sentinel absorption exceeds capacity');energy+=4;
+    if(energy+4>15)return fail('Warden absorption exceeds capacity');energy+=4;
     if(energy<3)return fail('Insufficient final shell energy');energy-=3;
     actions.push({action:'shell',index:peakIndex},{action:'transfer',index:peakIndex},{action:'escape',index:peakIndex});
     return {valid:true,minimumEnergy:minimum,finalEnergy:energy,actions,scope:'terrain-and-energy'};
@@ -449,24 +449,24 @@ class LandscapeGenerator {
     }
     for (const index of resources) objects.push({index,type:'tree'});
     // Start looking away from the player, also safe when a landscape has no terrain-hidden candidate.
-    const sentinelAngle = Math.atan2(-(sx-px),-(sz-pz)) + Math.PI;
-    return RouteValidator.prepare({level,size,heights,peakIndex,spawnIndex,objects,sentinelAngle,spawnHasCover:hiddenFromPeak(spawnIndex)});
+    const wardenAngle = Math.atan2(-(sx-px),-(sz-pz)) + Math.PI;
+    return RouteValidator.prepare({level,size,heights,peakIndex,spawnIndex,objects,wardenAngle,spawnHasCover:hiddenFromPeak(spawnIndex)});
   }
 }
 
 class PreferencesStore {
   constructor(storage){
-    this.storage=storage;this.key='sentinel.settings.v1';this.persistent=!!storage;this.data={sensitivity:1,brightness:1,musicVolume:.3,effectsVolume:.75};
+    this.storage=storage;this.key='warden.settings.v1';this.persistent=!!storage;this.data={sensitivity:1,brightness:1,musicVolume:.3,effectsVolume:.75};
     let raw=null;try{raw=storage?.getItem(this.key)||null;}catch(error){this.persistent=false;}
     try{const saved=JSON.parse(raw);if(saved){for(const [key,min,max] of [['sensitivity',.25,3],['brightness',.65,1.6],['musicVolume',0,1],['effectsVolume',0,1]])if(typeof saved[key]==='number'&&Number.isFinite(saved[key]))this.data[key]=Math.max(min,Math.min(max,saved[key]));}}catch(error){}
   }
   save(){try{if(!this.storage)throw Error('Storage unavailable');this.storage.setItem(this.key,JSON.stringify(this.data));}catch(error){this.persistent=false;}}
 }
-function sentryCountForLevel(level){return level<10?0:level<50?1:level<200?2:level<1000?3:4;}
+function lookoutCountForLevel(level){return level<10?0:level<50?1:level<200?2:level<1000?3:4;}
 
 class ProgressStore {
   constructor(storage) {
-    this.storage=storage;this.persistent=!!storage;this.key='sentinel.progress.v1';
+    this.storage=storage;this.persistent=!!storage;this.key='warden.progress.v1';
     this.data={lastLevel:1,tutorialComplete:false,tutorialDismissed:false,completed:{}};
     try {
       const saved=JSON.parse(storage?.getItem(this.key)||'null');
@@ -487,8 +487,8 @@ class ProgressStore {
 }
 
 if (typeof THREE !== 'undefined') { (() => {
-const $=id=>document.getElementById(id), SIZE=24, TILE=4, STEP=1.4, EYE=2.7, ROCK=2, COST={tree:1,boulder:2,synthoid:3,sentinel:4,sentry:4};
-let scene,camera,renderer,terrain=[],entities=[],current,sentinel,peak,energy=10,yaw=0,pitch=-.13,active=false,ended=false,started=false,spotted=false,turnTime=0,drainTime=0,aim=null,toastTime=0,last=performance.now(),drag=false;
+const $=id=>document.getElementById(id), SIZE=24, TILE=4, STEP=1.4, EYE=2.7, ROCK=2, COST={tree:1,boulder:2,avatar:3,warden:4,lookout:4};
+let scene,camera,renderer,terrain=[],entities=[],current,warden,peak,energy=10,yaw=0,pitch=-.13,active=false,ended=false,started=false,spotted=false,turnTime=0,drainTime=0,aim=null,toastTime=0,last=performance.now(),drag=false;
 let storage=null;try{storage=window.localStorage;}catch(error){}
 const progress=new ProgressStore(storage);
 const preferences=new PreferencesStore(storage);
@@ -513,15 +513,15 @@ const cells=Array.from({length:15},()=>{const el=document.createElement('i');el.
 const meshes=new Set(); let selector,scanFan,effects=null,buildMode='boulder';
 function wireMesh(geo,color,fill){const m=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:fill||color,flatShading:true}));const lines=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({color}));m.add(lines);return m;}
 function block(geo,color,fill,x,y,z,group){const m=wireMesh(geo,color,fill);m.position.set(x,y,z);group.add(m);return m;}
-function makeModel(type){const group=new THREE.Group();const c={tree:0x94c881,boulder:0x87bfd0,synthoid:0xffcc80,sentinel:0xff776b,sentry:0xffbd62}[type];
+function makeModel(type){const group=new THREE.Group();const c={tree:0x94c881,boulder:0x87bfd0,avatar:0xffcc80,warden:0xff776b,lookout:0xffbd62}[type];
 if(type==='boulder')block(new THREE.BoxGeometry(3.25,ROCK,3.25),c,0x294452,0,ROCK/2,0,group);
 if(type==='tree'){block(new THREE.CylinderGeometry(.16,.25,.8,5),c,0x40503c,0,.4,0,group);block(new THREE.ConeGeometry(1.3,2.8,5),c,0x2b533d,0,2.1,0,group);}
-if(type==='synthoid'){block(new THREE.CylinderGeometry(.8,1,.45,6),c,0x685735,0,.225,0,group);block(new THREE.CylinderGeometry(.55,.8,1.25,6),c,0x554a36,0,1.05,0,group);block(new THREE.OctahedronGeometry(.57),c,0x827347,0,2,0,group);block(new THREE.BoxGeometry(.65,.12,.12),0xffedbb,0xffcc80,0,2.05,-.48,group);}
-if(type==='sentinel'||type==='sentry'){block(new THREE.CylinderGeometry(.95,1.3,.45,8),c,0x653b3c,0,.225,0,group);block(new THREE.CylinderGeometry(.55,1,2.3,5),c,0x743f45,0,1.55,0,group);block(new THREE.OctahedronGeometry(.8),c,0xa65353,0,3,0,group);block(new THREE.BoxGeometry(1.05,.16,.25),0xffb18f,0xff9077,0,3,-.65,group);
-const eye=new THREE.Mesh(new THREE.SphereGeometry(.18,8,6),new THREE.MeshBasicMaterial({color:0xff584e}));eye.position.set(0,3,-.85);eye.name='sentinelEye';group.add(eye);
-const eyeLight=new THREE.PointLight(0xff6050,1.2,16,2);eyeLight.position.copy(eye.position);eyeLight.name='sentinelEyeLight';group.add(eyeLight);}
+if(type==='avatar'){block(new THREE.CylinderGeometry(.8,1,.45,6),c,0x685735,0,.225,0,group);block(new THREE.CylinderGeometry(.55,.8,1.25,6),c,0x554a36,0,1.05,0,group);block(new THREE.OctahedronGeometry(.57),c,0x827347,0,2,0,group);block(new THREE.BoxGeometry(.65,.12,.12),0xffedbb,0xffcc80,0,2.05,-.48,group);}
+if(type==='warden'||type==='lookout'){block(new THREE.CylinderGeometry(.95,1.3,.45,8),c,0x653b3c,0,.225,0,group);block(new THREE.CylinderGeometry(.55,1,2.3,5),c,0x743f45,0,1.55,0,group);block(new THREE.OctahedronGeometry(.8),c,0xa65353,0,3,0,group);block(new THREE.BoxGeometry(1.05,.16,.25),0xffb18f,0xff9077,0,3,-.65,group);
+const eye=new THREE.Mesh(new THREE.SphereGeometry(.18,8,6),new THREE.MeshBasicMaterial({color:0xff584e}));eye.position.set(0,3,-.85);eye.name='wardenEye';group.add(eye);
+const eyeLight=new THREE.PointLight(0xff6050,1.2,16,2);eyeLight.position.copy(eye.position);eyeLight.name='wardenEyeLight';group.add(eyeLight);}
 
-if(type==='sentry')group.scale.setScalar(.78);return group;}
+if(type==='lookout')group.scale.setScalar(.78);return group;}
 // Cosmetic geometry is never registered in the gameplay raycast set.
 class VisualEffects {
   constructor(world, view, level) {
@@ -564,7 +564,7 @@ class VisualEffects {
       });const sheet=new THREE.Mesh(new THREE.PlaneGeometry(135,135),material);sheet.rotation.x=-Math.PI/2;sheet.position.y=1.1+i*3.3;world.add(sheet);this.mist.push(sheet);
     }
     this.ghosts={};
-    for(const type of ['boulder','tree','synthoid']){
+    for(const type of ['boulder','tree','avatar']){
       const ghost=makeModel(type);
       ghost.traverse(o=>{if(o.material){o.material.dispose();o.material=o.isMesh?new THREE.MeshBasicMaterial({color:0xb9ffb2,transparent:true,opacity:.18,depthWrite:false}):new THREE.LineBasicMaterial({color:0xb9ffb2,transparent:true,opacity:.8,depthWrite:false});}});
       ghost.visible=false;world.add(ghost);this.ghosts[type]=ghost;
@@ -607,7 +607,7 @@ class VisualEffects {
       $('blueprint').textContent=ready?(transferStep?'[Q] TRANSFER INTO THIS SHELL':'[A] ABSORB THIS '+(tutorial.step===0?'TREE':'ABANDONED SHELL')):'AIM AT THE GOLD-MARKED '+(tutorial.step===0?'TREE':'SHELL');
       $('blueprint').dataset.state=ready?'valid':'training';$('cross').dataset.state=ready?'valid':'training';return;
     }
-    const status=placementStatus(target,type);$('blueprint').textContent=type.toUpperCase()+' · '+COST[type]+' EU · '+(status.valid?'['+({boulder:'B',tree:'T',synthoid:'R'}[type])+'] BUILD':status.reason);
+    const status=placementStatus(target,type);$('blueprint').textContent=type.toUpperCase()+' · '+COST[type]+' EU · '+(status.valid?'['+({boulder:'B',tree:'T',avatar:'R'}[type])+'] BUILD':status.reason);
     $('blueprint').dataset.state=status.valid?'valid':'blocked';$('cross').dataset.state=status.valid?'valid':'blocked';
     if(!target||!active||editingLevel)return;
     const ghost=this.ghosts[type],color=status.valid?0xbaffad:0xff7b72;
@@ -631,12 +631,12 @@ class VisualEffects {
 
 function entity(type,tile,support=null){const base=support?support.y+ROCK:tile.y;const e={type,tile,support,y:base,group:makeModel(type),parts:[]};e.group.position.set(tile.x,base,tile.z);e.group.traverse(m=>{if(m.isMesh){m.userData.entity=e;e.parts.push(m);meshes.add(m);}});scene.add(e.group);entities.push(e);scene.updateMatrixWorld(true);return e;}
 function remove(e){if(e.fan)effects.disposeObject(e.fan);scene.remove(e.group);e.group.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});e.parts.forEach(m=>meshes.delete(m));entities.splice(entities.indexOf(e),1);}
-function watchers(){return entities.filter(e=>e.type==='sentinel'||e.type==='sentry');}
+function watchers(){return entities.filter(e=>e.type==='warden'||e.type==='lookout');}
 function createWatcher(type,tile,angle,interval=3,phase=0){
-  const e=entity(type,tile);e.angle=angle;e.interval=interval;e.timer=phase;e.eyeHeight=type==='sentinel'?3:2.34;e.spotted=false;e.threat=0;
-  e.group.rotation.y=angle;const range=type==='sentinel'?44:30,width=range*Math.tan(Math.PI/8);
+  const e=entity(type,tile);e.angle=angle;e.interval=interval;e.timer=phase;e.eyeHeight=type==='warden'?3:2.34;e.spotted=false;e.threat=0;
+  e.group.rotation.y=angle;const range=type==='warden'?44:30,width=range*Math.tan(Math.PI/8);
   const geo=new THREE.BufferGeometry().setFromPoints([new V(0,0,0),new V(-width,0,-range),new V(0,0,0),new V(width,0,-range),new V(-width,0,-range),new V(width,0,-range)]);
-  e.fan=new THREE.LineSegments(geo,new THREE.LineBasicMaterial({color:type==='sentinel'?0xf18e7d:0xffc879,transparent:true,opacity:.14}));
+  e.fan=new THREE.LineSegments(geo,new THREE.LineBasicMaterial({color:type==='warden'?0xf18e7d:0xffc879,transparent:true,opacity:.14}));
   e.fan.position.set(tile.x,tile.y+e.eyeHeight,tile.z);e.fan.rotation.y=angle;scene.add(e.fan);return e;
 }
 function disposeLandscape() {
@@ -659,7 +659,7 @@ function loadLevel(number,play=true,practice=false) {
   active=false;audio.setPlaying(false);keys.clear();drag=false;editingLevel=false;
   tutorial=null;tutorialFinished=false;elapsed=0;transferCount=0;gazeThreat=0;$('tutorialPanel').hidden=true;$('nextLandscape').hidden=true;$('tutorialStart').textContent='GUIDED TRAINING';$('threatVeil').style.opacity=0;
   if(!practice)progress.setLast(number);
-  disposeLandscape();terrain=[];entities=[];meshes.clear();current=null;sentinel=null;
+  disposeLandscape();terrain=[];entities=[];meshes.clear();current=null;warden=null;
   energy=10;buildMode='boulder';camera.fov=68;camera.updateProjectionMatrix();$('warpVeil').style.opacity=0;$('energyGain').style.opacity=0;ended=false;spotted=false;turnTime=0;drainTime=0;aim=null;toastTime=0;pitch=-.13;levelNumber=number;
   levelRandom=mulberry32(number^0x48595045);audio.setLevel(number);
   scene=new THREE.Scene();effects=new VisualEffects(scene,camera,number);
@@ -669,18 +669,18 @@ function loadLevel(number,play=true,practice=false) {
     const m=wireMesh(new THREE.BoxGeometry(TILE,y+3,TILE),0x456257,color);m.position.set(t.x,(y-3)/2,t.z);m.userData.tile=t;t.mesh=m;
     scene.add(m);terrain.push(t);meshes.add(m);
   }
-  peak=terrain[layout.peakIndex];sentinel=createWatcher('sentinel',peak,layout.sentinelAngle);scanFan=sentinel.fan;
-  for(const sentry of layout.sentries)createWatcher('sentry',terrain[sentry.index],sentry.angle,sentry.interval,sentry.phase);
-  const start=terrain[layout.spawnIndex];current=entity('synthoid',start);current.group.visible=false;
+  peak=terrain[layout.peakIndex];warden=createWatcher('warden',peak,layout.wardenAngle);scanFan=warden.fan;
+  for(const lookout of layout.lookouts)createWatcher('lookout',terrain[lookout.index],lookout.angle,lookout.interval,lookout.phase);
+  const start=terrain[layout.spawnIndex];current=entity('avatar',start);current.group.visible=false;
   for(const object of layout.objects)entity(object.type,terrain[object.index]);
   selector=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.7,.035,3.7)),new THREE.LineBasicMaterial({color:0xd3ffad}));scene.add(selector);selector.visible=false;
   const stars=[],cosmeticRandom=mulberry32(number^0x53544152);
   for(let i=0;i<280;i++){const a=cosmeticRandom()*Math.PI*2,r=110+cosmeticRandom()*90;stars.push(Math.cos(a)*r,25+cosmeticRandom()*100,Math.sin(a)*r);}
   const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(stars,3));scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:0x9ab9b6,size:.18})));
-  const label=String(number).padStart(5,'0');document.title='THE SENTINEL R9 — Landscape '+label;
+  const label=String(number).padStart(5,'0');document.title='SILENT SUMMIT — Landscape '+label;
   $('landscapeLabel').textContent='LANDSCAPE '+label+' / 10000 · '+effects.palette.name;$('modalLevel').textContent='TACTICAL LANDSCAPE SIMULATION / '+label;
   $('levelInput').value=number;$('previousLevel').disabled=number===1;$('nextLevel').disabled=number===10000;
-  $('phase').textContent='01 / ASCEND THE LANDSCAPE';$('objective').textContent='Build a boulder. Place a synthoid on top. Transfer, reclaim your old shell, and climb.';
+  $('phase').textContent='01 / ASCEND THE LANDSCAPE';$('objective').textContent='Build a boulder. Place an avatar on top. Transfer, reclaim your old shell, and climb.';
   $('target').textContent='AWAITING SIGNAL';$('toast').style.opacity=0;
   moveCamera();yaw=Math.atan2(-(peak.x-start.x),-(peak.z-start.z));updateCamera();scene.updateMatrixWorld(true);checkScan(0);
   started=play;active=play;audio.setPlaying(play);last=performance.now();
@@ -724,8 +724,8 @@ function renderLandscapeBrowser(){
   const visible=levels.slice(browserPage*48,browserPage*48+48);
   $('browserSummary').textContent=Object.keys(completed).length+' / 10000 LANDSCAPES CLEARED · '+levels.length+' MATCHING · CURRENT '+String(levelNumber).padStart(5,'0');
   $('landscapeGrid').innerHTML=visible.length?visible.map(n=>{
-    const record=completed[n],sentries=sentryCountForLevel(n);
-    return '<article class="landscape-card'+(record?' cleared':'')+(n===levelNumber?' current':'')+(n===browserFound?' found':'')+'" data-landscape="'+n+'"><h3>'+String(n).padStart(5,'0')+'</h3><div class="landscape-state">'+(record?'✓ CLEARED':'UNCLEARED')+(n===levelNumber?' · CURRENT':'')+'</div><p>1 SENTINEL'+(sentries?' + '+sentries+(sentries===1?' SENTRY':' SENTRIES'):'')+'<br>'+(record?'BEST '+formatTime(record.bestTime)+'<br>FEWEST TRANSFERS '+record.fewestTransfers+'<br>'+record.runs+' COMPLETED RUN'+(record.runs===1?'':'S'):'NO RECORD YET<br>FIND THE HIGH GROUND')+'</p><button type="button" data-play-level="'+n+'">'+(record?'REPLAY':'PLAY')+' →</button></article>';
+    const record=completed[n],lookouts=lookoutCountForLevel(n);
+    return '<article class="landscape-card'+(record?' cleared':'')+(n===levelNumber?' current':'')+(n===browserFound?' found':'')+'" data-landscape="'+n+'"><h3>'+String(n).padStart(5,'0')+'</h3><div class="landscape-state">'+(record?'✓ CLEARED':'UNCLEARED')+(n===levelNumber?' · CURRENT':'')+'</div><p>1 WARDEN'+(lookouts?' + '+lookouts+(lookouts===1?' LOOKOUT':' LOOKOUTS'):'')+'<br>'+(record?'BEST '+formatTime(record.bestTime)+'<br>FEWEST TRANSFERS '+record.fewestTransfers+'<br>'+record.runs+' COMPLETED RUN'+(record.runs===1?'':'S'):'NO RECORD YET<br>FIND THE HIGH GROUND')+'</p><button type="button" data-play-level="'+n+'">'+(record?'REPLAY':'PLAY')+' →</button></article>';
   }).join(''):'<p class="empty-library">No landscapes match this filter.<br>Finish a landscape to record your first personal best.</p>';
   $('browserPage').textContent='PAGE '+(browserPage+1)+' / '+pages;$('browserPrevious').disabled=browserPage===0;$('browserNext').disabled=browserPage>=pages-1;
 }
@@ -737,19 +737,19 @@ function drawTerrainMap(canvas,expanded=false){
   for(const t of terrain){const band=Math.round(t.y/highest*9);ctx.fillStyle=palette[band];ctx.fillRect(padding+t.i*s,padding+t.j*s,s-.5,s-.5);}
   if(expanded){ctx.strokeStyle='#06131d77';ctx.lineWidth=1;ctx.beginPath();for(const t of terrain){const x=padding+t.i*s,y=padding+t.j*s;if(t.i<SIZE-1&&terrain[t.j*SIZE+t.i+1].y!==t.y){ctx.moveTo(x+s,y);ctx.lineTo(x+s,y+s);}if(t.j<SIZE-1&&terrain[(t.j+1)*SIZE+t.i].y!==t.y){ctx.moveTo(x,y+s);ctx.lineTo(x+s,y+s);}}ctx.stroke();}
   const radius=expanded?Math.max(3,s*.18):2.3;
-  for(const e of entities){if(e===current)continue;const {x,y}=point(e.tile);ctx.lineWidth=expanded?2:1;ctx.fillStyle={tree:'#528463',boulder:'#77b9cd',synthoid:'#ffd296',sentinel:'#ff706a',sentry:'#ffb354'}[e.type];ctx.strokeStyle=ctx.fillStyle;
+  for(const e of entities){if(e===current)continue;const {x,y}=point(e.tile);ctx.lineWidth=expanded?2:1;ctx.fillStyle={tree:'#528463',boulder:'#77b9cd',avatar:'#ffd296',warden:'#ff706a',lookout:'#ffb354'}[e.type];ctx.strokeStyle=ctx.fillStyle;
     if(e.type==='tree'){ctx.beginPath();ctx.arc(x,y,expanded?radius*.55:1.25,0,Math.PI*2);ctx.fill();}
     else if(e.type==='boulder')ctx.strokeRect(x-radius,y-radius,radius*2,radius*2);
-    else if(e.type==='synthoid'){ctx.beginPath();ctx.moveTo(x,y-radius*1.5);ctx.lineTo(x+radius,y);ctx.lineTo(x,y+radius*1.5);ctx.lineTo(x-radius,y);ctx.closePath();ctx.fill();}
-    else{const dx=-Math.sin(e.angle),dy=-Math.cos(e.angle);if(e.type==='sentinel')ctx.fillRect(x-radius,y-radius,radius*2,radius*2);else{ctx.beginPath();ctx.moveTo(x+dx*radius*1.7,y+dy*radius*1.7);ctx.lineTo(x-dx*radius+dy*radius,y-dy*radius-dx*radius);ctx.lineTo(x-dx*radius-dy*radius,y-dy*radius+dx*radius);ctx.closePath();ctx.fill();}if(expanded){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx*s*1.7,y+dy*s*1.7);ctx.stroke();}}
+    else if(e.type==='avatar'){ctx.beginPath();ctx.moveTo(x,y-radius*1.5);ctx.lineTo(x+radius,y);ctx.lineTo(x,y+radius*1.5);ctx.lineTo(x-radius,y);ctx.closePath();ctx.fill();}
+    else{const dx=-Math.sin(e.angle),dy=-Math.cos(e.angle);if(e.type==='warden')ctx.fillRect(x-radius,y-radius,radius*2,radius*2);else{ctx.beginPath();ctx.moveTo(x+dx*radius*1.7,y+dy*radius*1.7);ctx.lineTo(x-dx*radius+dy*radius,y-dy*radius-dx*radius);ctx.lineTo(x-dx*radius-dy*radius,y-dy*radius+dx*radius);ctx.closePath();ctx.fill();}if(expanded){ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx*s*1.7,y+dy*s*1.7);ctx.stroke();}}
   }
-  if(!sentinel){const {x,y}=point(peak);ctx.strokeStyle='#fff5cf';ctx.lineWidth=2;ctx.strokeRect(x-radius*1.6,y-radius*1.6,radius*3.2,radius*3.2);}
+  if(!warden){const {x,y}=point(peak);ctx.strokeStyle='#fff5cf';ctx.lineWidth=2;ctx.strokeRect(x-radius*1.6,y-radius*1.6,radius*3.2,radius*3.2);}
   const {x,y}=point(current.tile);ctx.fillStyle='#d8ffbd';ctx.strokeStyle='#09171f';ctx.lineWidth=expanded?2:1;ctx.beginPath();ctx.arc(x,y,expanded?radius*1.3:3.2,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.strokeStyle='#e0ffca';ctx.lineWidth=expanded?2:1;ctx.beginPath();ctx.arc(x,y,expanded?radius*2:5,0,Math.PI*2);ctx.moveTo(x,y);ctx.lineTo(x-Math.sin(yaw)*s*1.5,y-Math.cos(yaw)*s*1.5);ctx.stroke();
   if(expanded){ctx.font='12px ui-monospace,monospace';ctx.fillStyle='#aec4b5';ctx.textAlign='center';ctx.fillText('N ↑',canvas.width/2,15);for(let i=0;i<SIZE;i+=4){ctx.fillText(String(i+1),padding+(i+.5)*s,canvas.height-8);ctx.fillText(String(i+1),12,padding+(i+.5)*s+4);}ctx.textAlign='start';}
 }
 function drawExpandedMap(){
   drawTerrainMap($('expandedMap'),true);
-  $('mapSummary').textContent='SECTOR '+(current.tile.i+1)+':'+(current.tile.j+1)+' · ALT '+current.y.toFixed(1)+'\n'+watchers().length+' ACTIVE WATCHER'+(watchers().length===1?'':'S')+' · '+entities.filter(e=>e.type==='synthoid'&&e!==current).length+' ABANDONED SHELLS';
+  $('mapSummary').textContent='SECTOR '+(current.tile.i+1)+':'+(current.tile.j+1)+' · ALT '+current.y.toFixed(1)+'\n'+watchers().length+' ACTIVE WATCHER'+(watchers().length===1?'':'S')+' · '+entities.filter(e=>e.type==='avatar'&&e!==current).length+' ABANDONED SHELLS';
 }
 $('mapButton').onclick=()=>openPanel('map');$('openMap').onclick=()=>openPanel('map');$('openSettings').onclick=()=>openPanel('settings');$('openBrowser').onclick=()=>openPanel('browser');$('closeUtility').onclick=()=>closePanel();
 document.querySelectorAll('[data-panel]').forEach(button=>button.onclick=()=>openPanel(button.dataset.panel));
@@ -786,30 +786,30 @@ function setTutorialStep(){
   const lessons=[
     ['ABSORB A TREE','Aim at the gold-marked tree and press A. Its base must be visible. You gain 1 energy.'],
     ['BUILD A BOULDER','Aim at the gold-marked empty ground where the tree stood. Press B to spend 2 energy.'],
-    ['CREATE A SHELL','Aim at the top of your new boulder. Press R to place a synthoid shell for 3 energy.'],
+    ['CREATE A SHELL','Aim at the top of your new boulder. Press R to place an avatar shell for 3 energy.'],
     ['TRANSFER YOUR MIND','Aim at the shell on the boulder and press Q. You will see from its higher position.'],
     ['RECLAIM YOUR OLD BODY','Turn toward your gold-marked abandoned shell. Aim at it and press A to recover 3 energy.']
   ];const [title,text]=lessons[tutorial.step];
   $('tutorialTitle').textContent=(tutorial.step+1)+' / 5 · '+title;$('tutorialText').textContent=text;
-  if(tutorial.step===1)buildMode='boulder';if(tutorial.step===2)buildMode='synthoid';
+  if(tutorial.step===1)buildMode='boulder';if(tutorial.step===2)buildMode='avatar';
   const target=tutorial.step===4?tutorial.old.tile:tutorial.tile;
   const y=tutorial.step===4?tutorial.old.y:tutorial.step>=2?tutorial.rock.y+ROCK:tutorial.tile.y;
   tutorial.marker.position.set(target.x,y+.09,target.z);
 }
 function tutorialAllows(action,object=null,target=null){
   if(!tutorial)return true;const t=tutorial;
-  const correct=[()=>action==='absorb'&&object===t.tree,()=>action==='boulder'&&target?.t===t.tile&&!target.support,()=>action==='synthoid'&&target?.support===t.rock,()=>action==='transfer'&&object===t.shell,()=>action==='absorb'&&object===t.old][t.step]();
+  const correct=[()=>action==='absorb'&&object===t.tree,()=>action==='boulder'&&target?.t===t.tile&&!target.support,()=>action==='avatar'&&target?.support===t.rock,()=>action==='transfer'&&object===t.shell,()=>action==='absorb'&&object===t.old][t.step]();
   if(!correct)notify('FOLLOW THE GOLD MARKER · '+$('tutorialTitle').textContent);return correct;
 }
 function advanceTutorial(action,object){
   if(!tutorial)return;
-  if(action==='boulder')tutorial.rock=object;if(action==='synthoid')tutorial.shell=object;
+  if(action==='boulder')tutorial.rock=object;if(action==='avatar')tutorial.shell=object;
   tutorial.step++;
   if(tutorial.step<5){setTutorialStep();return;}
   clearTutorial();progress.data.tutorialComplete=true;progress.save();tutorialFinished=true;
   active=false;audio.setPlaying(false);audio.outcome('training');keys.clear();effects.hidePreview();document.exitPointerLock?.();
   $('modalTitle').textContent='YOU HAVE THE HIGH GROUND.';
-  $('modalBody').innerHTML='<p>Training complete. You absorbed energy, built a raised body, transferred, and reclaimed your old shell.</p><p>In a real landscape the Sentinel keeps turning. Later levels add sentries: cover must hide you from every watcher. Climb above its platform, absorb it, occupy its summit, then press H to escape.</p><p>Practice does not count toward your records.</p>';
+  $('modalBody').innerHTML='<p>Training complete. You absorbed energy, built a raised body, transferred, and reclaimed your old shell.</p><p>In a real landscape the Warden keeps turning. Later levels add lookouts: cover must hide you from every watcher. Climb above its platform, absorb it, occupy its summit, then press H to escape.</p><p>Practice does not count toward your records.</p>';
   $('begin').textContent='PLAY LANDSCAPE 00001 →';$('tutorialStart').textContent='REPLAY TRAINING';$('nextLandscape').hidden=true;$('modal').classList.remove('hidden');
 }
 function updateTutorial(){
@@ -824,7 +824,7 @@ function updateThreat(){
   const pulse=effects.reducedMotion?1:.75+Math.sin(effects.time*9)*.25;
   $('threatVeil').style.opacity=String(active&&!tutorial?(spotted ? .68*pulse : gazeThreat*.3):0);
   $('scan').classList.toggle('approaching',!spotted&&gazeThreat>0);
-  for(const enemy of watchers()){const eye=enemy.group.getObjectByName('sentinelEye'),light=enemy.group.getObjectByName('sentinelEyeLight');if(eye){eye.material.color.setHex(enemy.spotted?0xffe1b2:enemy.threat>0?0xffb468:enemy.type==='sentry'?0xffbd62:0xff584e);eye.scale.setScalar(1+enemy.threat*.4);}if(light){light.color.setHex(enemy.type==='sentry'?0xffbd62:0xff6050);light.intensity=1.2+enemy.threat*2.5;}}
+  for(const enemy of watchers()){const eye=enemy.group.getObjectByName('wardenEye'),light=enemy.group.getObjectByName('wardenEyeLight');if(eye){eye.material.color.setHex(enemy.spotted?0xffe1b2:enemy.threat>0?0xffb468:enemy.type==='lookout'?0xffbd62:0xff584e);eye.scale.setScalar(1+enemy.threat*.4);}if(light){light.color.setHex(enemy.type==='lookout'?0xffbd62:0xff6050);light.intensity=1.2+enemy.threat*2.5;}}
 }
 
 function selectLevel(number) { audio.unlock();if(loadLevel(number))$('levelInput').blur(); }
@@ -853,16 +853,16 @@ function placementStatus(target,type){
   return {valid:true,reason:'READY'};
 }
 function build(type){if(!tutorialAllows(type,null,aim))return;buildMode=type;const status=placementStatus(aim,type);if(!status.valid){notify(status.reason);return;}if(spend(COST[type])){audio.build(type);const created=entity(type,aim.t,aim.support);if(tutorial)advanceTutorial(type,created);effects.ring(aim.t,aim.y);notify(type.toUpperCase()+' CREATED');}}
-function absorb(){const e=aim&&aim.e;if(!tutorialAllows('absorb',e))return;if(!e){notify('AIM AT AN OBJECT TO ABSORB');return;}if(!aim.base){notify('BASE NOT VISIBLE · GAIN MORE HEIGHT');return;}if(entities.some(x=>x.support===e)){notify('SUPPORT IN USE · REMOVE THE OBJECT ABOVE FIRST');return;}if(e===sentinel&&current.y<=sentinel.y+.05){notify('RISE ABOVE THE SENTINEL’S PLATFORM FIRST');return;}if(energy+COST[e.type]>15){notify('ENERGY CAPACITY EXCEEDED · SPEND ENERGY FIRST');return;}audio.absorb(COST[e.type]);effects.absorb(e,COST[e.type]);energy+=COST[e.type];if(e===sentinel){sentinel=null;gazeThreat=0;scanFan.visible=false;spotted=false;drainTime=0;notify('SENTINEL ABSORBED · OCCUPY ITS PEAK');}else notify('ABSORBED +'+COST[e.type]+' EU');const wasWatcher=e.type==='sentinel'||e.type==='sentry';remove(e);if(wasWatcher)checkScan(0);if(tutorial)advanceTutorial('absorb',e);updateHUD();}
-function transfer(e,sound='transfer'){if(!tutorialAllows('transfer',e))return;if(!e||e.type!=='synthoid'){notify('AIM AT A SYNTHOID SHELL');return;}transferCount++;audio.teleport(sound);current.group.visible=true;current=e;current.group.visible=false;moveCamera();updateCamera();effects.transfer();if(tutorial)advanceTutorial('transfer',e);checkScan(0);notify(current.tile===peak&&!sentinel?'PEAK OCCUPIED · PRESS H TO ESCAPE':'CONSCIOUSNESS TRANSFERRED');updateHUD();}
-function hyperspace(){if(tutorial){notify('HYPERSPACE IS AVAILABLE AFTER TRAINING');return;}if(!sentinel&&current.tile===peak){finish(true);return;}if(energy<3){notify('HYPERSPACE REQUIRES 3 EU');return;}const choices=terrain.filter(t=>t.y<current.y-.05&&!entities.some(e=>e.tile===t));if(!choices.length){notify('NO EMPTY LOWER TILE · CLIMB BEFORE JUMPING');return;}spend(3);const t=choices[Math.floor(levelRandom()*choices.length)];transfer(entity('synthoid',t),'hyperspace');notify('HYPERSPACE · LOWER GROUND REACHED');}
+function absorb(){const e=aim&&aim.e;if(!tutorialAllows('absorb',e))return;if(!e){notify('AIM AT AN OBJECT TO ABSORB');return;}if(!aim.base){notify('BASE NOT VISIBLE · GAIN MORE HEIGHT');return;}if(entities.some(x=>x.support===e)){notify('SUPPORT IN USE · REMOVE THE OBJECT ABOVE FIRST');return;}if(e===warden&&current.y<=warden.y+.05){notify('RISE ABOVE THE WARDEN’S PLATFORM FIRST');return;}if(energy+COST[e.type]>15){notify('ENERGY CAPACITY EXCEEDED · SPEND ENERGY FIRST');return;}audio.absorb(COST[e.type]);effects.absorb(e,COST[e.type]);energy+=COST[e.type];if(e===warden){warden=null;gazeThreat=0;scanFan.visible=false;spotted=false;drainTime=0;notify('WARDEN ABSORBED · OCCUPY ITS PEAK');}else notify('ABSORBED +'+COST[e.type]+' EU');const wasWatcher=e.type==='warden'||e.type==='lookout';remove(e);if(wasWatcher)checkScan(0);if(tutorial)advanceTutorial('absorb',e);updateHUD();}
+function transfer(e,sound='transfer'){if(!tutorialAllows('transfer',e))return;if(!e||e.type!=='avatar'){notify('AIM AT AN AVATAR SHELL');return;}transferCount++;audio.teleport(sound);current.group.visible=true;current=e;current.group.visible=false;moveCamera();updateCamera();effects.transfer();if(tutorial)advanceTutorial('transfer',e);checkScan(0);notify(current.tile===peak&&!warden?'PEAK OCCUPIED · PRESS H TO ESCAPE':'CONSCIOUSNESS TRANSFERRED');updateHUD();}
+function hyperspace(){if(tutorial){notify('HYPERSPACE IS AVAILABLE AFTER TRAINING');return;}if(!warden&&current.tile===peak){finish(true);return;}if(energy<3){notify('HYPERSPACE REQUIRES 3 EU');return;}const choices=terrain.filter(t=>t.y<current.y-.05&&!entities.some(e=>e.tile===t));if(!choices.length){notify('NO EMPTY LOWER TILE · CLIMB BEFORE JUMPING');return;}spend(3);const t=choices[Math.floor(levelRandom()*choices.length)];transfer(entity('avatar',t),'hyperspace');notify('HYPERSPACE · LOWER GROUND REACHED');}
 function checkScan(dt){
   if(tutorial){spotted=false;gazeThreat=0;drainTime=0;for(const e of watchers()){e.spotted=false;e.threat=0;}return;}
   const enemies=watchers();spotted=false;gazeThreat=0;
   for(const enemy of enemies){
-    let timer=(enemy===sentinel?turnTime:enemy.timer)+dt;
-    while(timer>=enemy.interval){timer-=enemy.interval;enemy.angle+=Math.PI/4;audio.sentinelTurn({x:enemy.tile.x,y:enemy.y+enemy.eyeHeight,z:enemy.tile.z},{x:camera.position.x,y:camera.position.y,z:camera.position.z,yaw},enemy.type);}
-    enemy.timer=timer;if(enemy===sentinel)turnTime=timer;
+    let timer=(enemy===warden?turnTime:enemy.timer)+dt;
+    while(timer>=enemy.interval){timer-=enemy.interval;enemy.angle+=Math.PI/4;audio.wardenTurn({x:enemy.tile.x,y:enemy.y+enemy.eyeHeight,z:enemy.tile.z},{x:camera.position.x,y:camera.position.y,z:camera.position.z,yaw},enemy.type);}
+    enemy.timer=timer;if(enemy===warden)turnTime=timer;
     enemy.group.rotation.y=enemy.angle;enemy.fan.rotation.y=enemy.angle;
   }
   scene.updateMatrixWorld(true);
@@ -875,10 +875,10 @@ function checkScan(dt){
     enemy.threat=enemy.spotted?1:visible&&nextFacing.dot(horizontal)>=Math.cos(Math.PI/8+.001)&&enemy.timer>warningStart?(enemy.timer-warningStart)/(enemy.interval-warningStart):0;
     spotted=spotted||enemy.spotted;gazeThreat=Math.max(gazeThreat,enemy.threat);
   }
-  // Overlapping gazes share the original drain cadence; adding sentries never multiplies damage.
+  // Overlapping gazes share the original drain cadence; adding lookouts never multiplies damage.
   if(spotted){drainTime+=dt;while(drainTime>=2){drainTime-=2;energy--;pulse();if(energy<0){finish(false);break;}}}else drainTime=0;
 }
-function updateHUD(){ audio.updateScene(levelNumber,tutorial?0:gazeThreat,energy);audio.setDrain(active&&spotted,energy); $('energy').textContent=Math.max(0,energy);cells.forEach((el,i)=>el.classList.toggle('on',i<energy));$('scan').textContent=tutorial?'◇ TRAINING · SENTINEL SUSPENDED':spotted?'▲ SPOTTED BY '+watchers().filter(e=>e.spotted).length+' WATCHER(S)':gazeThreat>0?'△ GAZE APPROACHING':'● SAFE';$('scan').classList.toggle('danger',spotted);const guards=watchers();$('tick').textContent=guards.length?(spotted?'DRAIN IN '+(2-drainTime).toFixed(1)+'s':'NEXT SWEEP '+Math.min(...guards.map(e=>e.interval-e.timer)).toFixed(1)+'s'):'ALL WATCHERS OFFLINE';$('watcherStatus').textContent=(sentinel?'SENTINEL ACTIVE':'SENTINEL ABSORBED')+' · '+guards.filter(e=>e.type==='sentry').length+' SENTRIES';$('coords').textContent='SECTOR '+String(current.tile.i+1).padStart(2,'0')+' : '+String(current.tile.j+1).padStart(2,'0')+' / ALT '+current.y.toFixed(1);if(!sentinel){$('phase').textContent=current.tile===peak?'03 / LEAVE THIS WORLD':'02 / CLAIM THE PEAK';$('objective').textContent=current.tile===peak?'The landscape is yours. Press H to complete the stage.':'Create a synthoid on the empty Sentinel platform, then transfer into it.';}drawMap();updateProgressHUD();updateTutorial();updateThreat();}
+function updateHUD(){ audio.updateScene(levelNumber,tutorial?0:gazeThreat,energy);audio.setDrain(active&&spotted,energy); $('energy').textContent=Math.max(0,energy);cells.forEach((el,i)=>el.classList.toggle('on',i<energy));$('scan').textContent=tutorial?'◇ TRAINING · WARDEN SUSPENDED':spotted?'▲ SPOTTED BY '+watchers().filter(e=>e.spotted).length+' WATCHER(S)':gazeThreat>0?'△ GAZE APPROACHING':'● SAFE';$('scan').classList.toggle('danger',spotted);const guards=watchers();$('tick').textContent=guards.length?(spotted?'DRAIN IN '+(2-drainTime).toFixed(1)+'s':'NEXT SWEEP '+Math.min(...guards.map(e=>e.interval-e.timer)).toFixed(1)+'s'):'ALL WATCHERS OFFLINE';$('watcherStatus').textContent=(warden?'WARDEN ACTIVE':'WARDEN ABSORBED')+' · '+guards.filter(e=>e.type==='lookout').length+' LOOKOUTS';$('coords').textContent='SECTOR '+String(current.tile.i+1).padStart(2,'0')+' : '+String(current.tile.j+1).padStart(2,'0')+' / ALT '+current.y.toFixed(1);if(!warden){$('phase').textContent=current.tile===peak?'03 / LEAVE THIS WORLD':'02 / CLAIM THE PEAK';$('objective').textContent=current.tile===peak?'The landscape is yours. Press H to complete the stage.':'Create an avatar on the empty Warden platform, then transfer into it.';}drawMap();updateProgressHUD();updateTutorial();updateThreat();}
 function drawMap(){drawTerrainMap($('map'));}
 function pause(){if(!started||ended||!active)return;effects.hidePreview();active=false;audio.setPlaying(false);keys.clear();drag=false;document.exitPointerLock?.();$('threatVeil').style.opacity=0;$('nextLandscape').hidden=true;$('tutorialStart').textContent=tutorial?'RESTART TRAINING':'GUIDED TRAINING';$('modalTitle').textContent='SIGNAL PAUSED';$('modalBody').innerHTML='<p>The landscape is suspended. Resume to continue from your current shell.</p><p>Click and drag or use arrow keys to look. Click the landscape for captured mouse look. P / Escape pauses.</p>';$('begin').textContent='RESUME →';$('modal').classList.remove('hidden');}
 function finish(win){
@@ -888,7 +888,7 @@ function finish(win){
   if(win){audio.teleport('hyperspace',true);effects.transfer();progress.recordWin(levelNumber,elapsed,transferCount);}
   $('modalTitle').textContent=win?'LANDSCAPE LIBERATED.':'SIGNAL LOST.';
   const record=progress.data.completed[levelNumber];
-  $('modalBody').innerHTML=win?'<p>Landscape '+String(levelNumber).padStart(5,'0')+' complete.</p><div class="steps">TIME '+formatTime(elapsed)+' · TRANSFERS '+transferCount+'<br>BEST TIME '+formatTime(record.bestTime)+' · FEWEST TRANSFERS '+record.fewestTransfers+'</div><p>'+(levelNumber===10000?'You have reached the final landscape. Revisit any seed to improve your records.':'Your records are saved in this browser. Continue to the next landscape or replay this one.')+'</p>':'<p>The Sentinel consumed your remaining energy. Build cover, transfer out of its sight, and reclaim abandoned shells to survive the climb.</p>';
+  $('modalBody').innerHTML=win?'<p>Landscape '+String(levelNumber).padStart(5,'0')+' complete.</p><div class="steps">TIME '+formatTime(elapsed)+' · TRANSFERS '+transferCount+'<br>BEST TIME '+formatTime(record.bestTime)+' · FEWEST TRANSFERS '+record.fewestTransfers+'</div><p>'+(levelNumber===10000?'You have reached the final landscape. Revisit any seed to improve your records.':'Your records are saved in this browser. Continue to the next landscape or replay this one.')+'</p>':'<p>The Warden consumed your remaining energy. Build cover, transfer out of its sight, and reclaim abandoned shells to survive the climb.</p>';
   $('begin').textContent='REPLAY LANDSCAPE →';$('tutorialStart').textContent='GUIDED TRAINING';$('nextLandscape').hidden=!win||levelNumber===10000;
   $('modal').classList.remove('hidden');updateProgressHUD();
 }
@@ -901,7 +901,7 @@ $('begin').onclick=()=>{
 $('tutorialStart').onclick=()=>{if(!started&&!progress.data.tutorialComplete&&!progress.data.tutorialDismissed&&levelNumber===1){progress.data.tutorialDismissed=true;progress.save();audio.unlock();loadLevel(levelNumber);}else startTutorial();};
 $('skipTraining').onclick=()=>{progress.data.tutorialDismissed=true;progress.save();audio.unlock();loadLevel(1);};
 $('nextLandscape').onclick=()=>{if(ended&&levelNumber<10000){audio.unlock();loadLevel(levelNumber+1);}};
-window.addEventListener('keydown',ev=>{if(uiPanel){if(ev.key==='Escape'){ev.preventDefault();closePanel();}return;}if(ev.target.closest?.('input,select,textarea')||ev.target.isContentEditable)return;if(ev.metaKey||ev.ctrlKey||ev.altKey)return;const k=ev.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))ev.preventDefault();if(['v','o','l'].includes(k)){if(!ev.repeat){ev.preventDefault();openPanel({v:'map',o:'settings',l:'browser'}[k]);}return;}if(k==='m'){if(!ev.repeat)toggleAudio();return;}if(k==='p'||k==='escape'){pause();return;}if(!active)return;audio.unlock();keys.add(k);if(ev.repeat)return;scene.updateMatrixWorld(true);aim=pick();if(k==='1')buildMode='boulder';if(k==='2')buildMode='tree';if(k==='3')buildMode='synthoid';if(k==='b')build('boulder');if(k==='t')build('tree');if(k==='r')build('synthoid');if(k==='a')absorb();if(k==='q')transfer(aim&&aim.e);if(k==='h')hyperspace();});
+window.addEventListener('keydown',ev=>{if(uiPanel){if(ev.key==='Escape'){ev.preventDefault();closePanel();}return;}if(ev.target.closest?.('input,select,textarea')||ev.target.isContentEditable)return;if(ev.metaKey||ev.ctrlKey||ev.altKey)return;const k=ev.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))ev.preventDefault();if(['v','o','l'].includes(k)){if(!ev.repeat){ev.preventDefault();openPanel({v:'map',o:'settings',l:'browser'}[k]);}return;}if(k==='m'){if(!ev.repeat)toggleAudio();return;}if(k==='p'||k==='escape'){pause();return;}if(!active)return;audio.unlock();keys.add(k);if(ev.repeat)return;scene.updateMatrixWorld(true);aim=pick();if(k==='1')buildMode='boulder';if(k==='2')buildMode='tree';if(k==='3')buildMode='avatar';if(k==='b')build('boulder');if(k==='t')build('tree');if(k==='r')build('avatar');if(k==='a')absorb();if(k==='q')transfer(aim&&aim.e);if(k==='h')hyperspace();});
 window.addEventListener('keyup',ev=>keys.delete(ev.key.toLowerCase()));window.addEventListener('blur',pause);document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();});
 $('world').addEventListener('mousedown',ev=>{if(active&&ev.button===0)drag=true;});window.addEventListener('mouseup',()=>drag=false);
 $('world').addEventListener('click',()=>{if(!active)return;audio.unlock();if(document.pointerLockElement)return;try{const result=$('world').requestPointerLock?.();if(result&&result.catch)result.catch(()=>notify('DRAG TO LOOK · ARROW KEYS ALSO AVAILABLE'));}catch(e){notify('DRAG TO LOOK · ARROW KEYS ALSO AVAILABLE');}});
