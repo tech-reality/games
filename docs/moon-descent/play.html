@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0a1116">
-  <meta name="description" content="Moon Descent v1.11. A lunar landing campaign with a live scoreboard and daily route.">
-  <title>Moon Descent v1.11 · Campaign and Daily Descent</title>
+  <meta name="description" content="Moon Descent v1.13. A lunar landing campaign with a live scoreboard and daily route.">
+  <title>Moon Descent v1.13 · Campaign and Daily Descent</title>
   <style>
     :root {
       color-scheme:dark;
@@ -174,7 +174,7 @@
     <header>
       <div class="identity">
         <svg aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3 9 19h14L16 3ZM11 19l-5 6m15-6 5 6M5 26h6m10 0h6M13 14h6"/><circle cx="16" cy="17" r="2"/></svg>
-        <div><div class="micro">v1.11 lunar console</div><h1>MOON <span class="accent">DESCENT</span></h1></div>
+        <div><div class="micro">v1.13 lunar console</div><h1>MOON <span class="accent">DESCENT</span></h1></div>
       </div>
       <div class="actions">
         <button id="soundBtn" aria-pressed="true" aria-label="Sound">♪ On</button>
@@ -203,6 +203,12 @@
                 <option value="campaign">Six-sector campaign</option>
                 <option value="demo">Guided landing demo</option>
                 <option value="daily">Daily Descent</option>
+                <optgroup label="Deep Drop">
+                  <option value="deepExpedition">Deep Drop expedition · 12 stages</option>
+                  <option value="deep">Straight Shaft</option>
+                  <option value="deepCavern">Cavern Rescue</option>
+                  <option value="deepRail">Rail Cavern</option>
+                </optgroup>
                 <optgroup label="Practise a sector">
                 <option value="ridge">Ridge Crossing</option>
                 <option value="rescue">South Pole Rescue</option>
@@ -264,7 +270,8 @@
   const ui = Object.fromEntries(Array.from(document.querySelectorAll('[id]'), element => [element.id, element]));
   const ctx = ui.game.getContext('2d');
   const map = ui.routeMap.getContext('2d');
-  const H = 600, W = 1540;
+  const normalWidth=1540, normalHeight=600;
+  let W=normalWidth, H=normalHeight;
   const camera = {x:0,y:0,zoom:1};
   let cameraBase = 1, dpr = 1;
   const STEP = 1/120;
@@ -304,7 +311,10 @@
     crater:'moon-descent-v1.7-crater-',
     farside:'moon-descent-v1.8-farside-',
     switchback:'moon-descent-v1.8-switchback-',
-    rail:'moon-descent-v1.8-rail-'
+    rail:'moon-descent-v1.8-rail-',
+    deep:'moon-descent-v1.12-deep-',
+    deepCavern:'moon-descent-v1.13-deep-cavern-',
+    deepRail:'moon-descent-v1.13-deep-rail-'
   };
   function savedBest(key) {
     const value = Number(get(key));
@@ -313,7 +323,8 @@
   const bestKey = () => missionId==='daily'
     ? releasePrefix+'daily-'+daily.date+'-'+difficulty
     : scorePrefixes[missionId]+'best-'+difficulty;
-  const campaignKey = () => releasePrefix+'campaign-best-'+difficulty;
+  const campaignKey = () => isExpedition()?'moon-descent-v1.13-expedition-best-'+difficulty:releasePrefix+'campaign-best-'+difficulty;
+  const runLength=()=>isExpedition()?expedition.routes.length:sectorOrder.length;
   const campaignTotal = () => Math.max(0,campaign.points-campaign.crashes*crashCost);
   const pretty = n => n.toLocaleString('en-GB');
   let best = 0;
@@ -475,14 +486,153 @@
     ],
     theme:missions.ridge.theme
   };
+  const deepMission={
+    name:'Straight Shaft', title:'Straight <em>Shaft</em>', location:'SCHRÖDINGER / CRATER SHAFT',
+    flightLabel:'DEEP DESCENT', brief:'The floor is far below. Brake early for Alpha’s shelf or descend to Bravo.',
+    height:1640, marker:{x:437,y:380,text:'UPPER RIM',short:'RIM'},
+    approach:485, defaultBeacon:1, seed:11947, planet:1090,
+    spawn:{x:820,y:109,vx:-3,vy:12}, fuelCost:0,
+    ledges:[
+      {centre:585,y:910,width:176,name:'ALPHA',mult:2,outpost:'UPPER SHELF'},
+      {centre:830,y:1515,width:150,name:'BRAVO',mult:6,outpost:'CRATER FLOOR'}
+    ],
+    profile:(alpha,bravo)=>[
+      [0,395],[81,376],[148,414],[214,398],[278,437],[333,416],[384,399],[437,380],
+      [449,455],[461,472],[467,631],[472,713],[473,863],[alpha.x,alpha.y],
+      [alpha.x+alpha.w,alpha.y],[698,969],[711,1105],[718,1201],[724,1344],[729,1472],
+      [bravo.x,bravo.y],[bravo.x+bravo.w,bravo.y],[943,1498],[956,1465],[970,1341],
+      [984,1297],[997,1184],[1002,1119],[1017,1047],[1019,934],[1038,851],[1045,703],
+      [1064,660],[1073,514],[1094,466],[1103,393],[1161,405],[1240,378],[1293,417],[normalWidth,395]
+    ],
+    theme:{sky:['#10182b','#171d30','#26243a'],ridge:'#b7a2e9',bright:'#e6d5ff',base:'#171827',
+      grid:'#655a88',stars:'213,212,246',haze:'#5749764e'}
+  };
+  const deepRoutes={
+    deep:deepMission,
+    deepCavern:{
+      name:'Cavern Rescue', title:'Cavern <em>Rescue</em>', location:'SCHRÖDINGER / EAST CAVERN',
+      flightLabel:'FIND THE CREW', brief:'Drop below the overhang, then fly right between the rock teeth. The crew is at Bravo.',
+      width:2210,height:1650,marker:{x:688,y:710,text:'CAVERN MOUTH',short:'ENTRY'},
+      approach:1390,defaultBeacon:1,seed:16019,planet:410,
+      spawn:{x:515,y:117,vx:1,vy:10},fuelCost:0,tankScale:1.75,
+      ledges:[
+        {centre:1310,y:1372,width:171,name:'ALPHA',mult:2,outpost:'SHELTER'},
+        {centre:1880,y:1404,width:151,name:'BRAVO',mult:7,outpost:'CREW'}
+      ],
+      outcrops:[[
+        [698,0],[2210,0],[2210,1215],[2120,1163],[2025,1095],[1940,985],[1814,956],
+        [1750,1010],[1702,1106],[1664,1033],[1620,974],[1554,954],[1495,988],[1454,1070],
+        [1414,1010],[1350,951],[1294,959],[1234,993],[1187,1072],[1146,997],[1095,945],
+        [1040,969],[990,898],[935,853],[869,833],[817,867],[770,793],[718,747],[698,710]
+      ]],
+      profile:(alpha,bravo)=>[
+        [0,390],[91,362],[179,402],[245,385],[295,441],[334,536],[353,655],[368,820],
+        [381,963],[407,1140],[436,1303],[493,1435],[585,1452],[665,1416],[740,1403],
+        [801,1369],[856,1355],[903,1233],[942,1304],[1006,1359],[1073,1351],[1127,1285],
+        [1172,1336],[1195,1365],[alpha.x,alpha.y],[alpha.x+alpha.w,alpha.y],[1436,1358],
+        [1480,1266],[1520,1313],[1580,1300],[1627,1238],[1676,1316],[1742,1364],
+        [1774,1384],[bravo.x,bravo.y],[bravo.x+bravo.w,bravo.y],[2014,1379],
+        [2073,1318],[2142,1289],[2210,1275]
+      ],
+      theme:{sky:['#191925','#2a253a','#362733'],ridge:'#e0aabb',bright:'#ffe1d8',base:'#211a26',
+        grid:'#875f7c',stars:'249,217,235',haze:'#9b4e673e'}
+    },
+    deepRail:{
+      name:'Rail Cavern', title:'Rail <em>Cavern</em>', location:'MARE AUSTRALE / LOWER RAIL',
+      flightLabel:'DESCEND TO THE RAIL', brief:'Take Alpha on the west wall or brake into Bravo’s moving deck deep in the cavern.',
+      height:1760, marker:{x:1160,y:449,text:'SERVICE RIM',short:'RIM'},
+      approach:535, defaultBeacon:1, seed:20704, planet:1200,
+      spawn:{x:823,y:121,vx:7,vy:9}, fuelCost:0,
+      ledges:[
+        {centre:545,y:924,width:162,name:'ALPHA',mult:2,outpost:'WEST SHELF'},
+        {centre:841,y:1514,width:132,name:'BRAVO',mult:7,outpost:'LOWER RAIL',travel:66,rate:.42}
+      ],
+      profile:alpha=>[
+        [0,414],[80,410],[146,436],[214,409],[294,432],[347,419],[387,466],[414,513],
+        [428,634],[436,790],[440,869],[alpha.x,alpha.y],[alpha.x+alpha.w,alpha.y],
+        [650,991],[658,1137],[667,1260],[673,1380],[682,1531],[720,1608],
+        [797,1629],[867,1618],[931,1629],[986,1618],[1010,1566],[1027,1419],
+        [1043,1298],[1064,1149],[1073,979],[1083,845],[1105,703],[1128,537],[1160,449],
+        [1218,441],[1290,459],[1385,418],[normalWidth,431]
+      ],
+      theme:{sky:['#101a23','#1a3035','#223c40'],ridge:'#9fdac4',bright:'#d8ffea',base:'#142428',
+        grid:'#487f76',stars:'205,246,233',haze:'#388e7549'}
+    }
+  };
+  const deepOrder=Object.keys(deepRoutes);
+  const expeditionLength=12;
+  let expedition=null;
+  const isExpedition=()=>missionId==='deepExpedition';
+  const isDeep=()=>isExpedition() || Object.hasOwn(deepRoutes,missionId);
   const sectorOrder=Object.keys(missions);
   let selection=get(selectionKey);
-  const validSelection = id => id==='campaign' || id==='daily' || id==='demo' || Object.hasOwn(missions,id);
+  const validSelection = id => id==='campaign' || id==='daily' || id==='demo' || id==='deepExpedition' || Object.hasOwn(deepRoutes,id) || Object.hasOwn(missions,id);
   if (!validSelection(selection)) selection='campaign';
   let missionId='ridge';
-  const mission=()=>missionId==='demo'?demoMission:missionId==='daily'?daily:missions[missionId];
+  const mission=()=>isExpedition()?expedition.routes[expedition.index]:
+    missionId==='demo'?demoMission:missionId==='daily'?daily:deepRoutes[missionId] || missions[missionId];
   let demoReturn='campaign', demoPractice=false, demoThrust=false, demoSteer=0;
   const sectorIndex=()=>sectorOrder.indexOf(missionId);
+
+  function varyDeepRoute(id,rng,seed) {
+    const source=deepRoutes[id];
+    const width=source.width || normalWidth;
+    const scaleX=.93+rng()*.14;
+    const upperScale=.92+rng()*.18;
+    const lowerScale=.91+rng()*.21;
+    const mirror=id!=='deepCavern' && rng()<.5;
+    const x=value=>(mirror?width-value:value)*scaleX;
+    const depth=value=>Math.min(value,800)*upperScale+Math.max(0,value-800)*lowerScale;
+    const texture=(px,py)=>Math.sin(px*.041+py*.018+seed*.000001);
+    const point=([px,py])=>[x(px),depth(py)];
+    const ledges=source.ledges.map(pad=>({
+      ...pad,centre:x(pad.centre),y:depth(pad.y),width:pad.width*scaleX,
+      travel:pad.travel?pad.travel*scaleX:undefined,
+      phase:pad.travel?rng()*Math.PI*2:undefined
+    }));
+    return {...source,
+      kind:id,seed,width:width*scaleX,height:depth(source.height),
+      marker:{...source.marker,x:x(source.marker.x),y:depth(source.marker.y)},
+      approach:x(source.approach),planet:x(source.planet),
+      direction:(source.direction || 1)*(mirror?-1:1),ledges,
+      outcrops:source.outcrops?.map(polygon=>polygon.map(([px,py])=>
+        point([px,py>800 && px<width?py+texture(px,py)*16:py])
+      )),
+      spawn:{x:x(source.spawn.x+(rng()-.5)*18),y:depth(source.spawn.y+(rng()-.5)*38),
+        vx:source.spawn.vx*(mirror?-1:1)*scaleX,vy:source.spawn.vy+(rng()-.5)*6},
+      profile:(...pads)=>{
+        const original=pads.map((pad,index)=>({...pad,
+          x:source.ledges[index].centre-pad.w/(2*scaleX),w:pad.w/scaleX,y:source.ledges[index].y
+        }));
+        const mapped=source.profile(...original).map(([px,py])=>{
+          const padEdge=original.some(pad=>px===pad.x || px===pad.x+pad.w);
+          const fixed=padEdge || px===0 || px===width;
+          return point([px,fixed?py:py+texture(px,py)*(id==='deepRail'?9:16)]);
+        });
+        return mirror?mapped.reverse():mapped;
+      }
+    };
+  }
+
+  function makeExpedition(seed) {
+    const rng=random(seed);
+    const routes=[];
+    while (routes.length<expeditionLength) {
+      const group=deepOrder.slice();
+      for (let i=group.length-1;i>0;i--) {
+        const j=Math.floor(rng()*(i+1));
+        [group[i],group[j]]=[group[j],group[i]];
+      }
+      if (routes.at(-1)?.kind===group[0]) group.push(group.shift());
+      for (const id of group) routes.push(varyDeepRoute(id,rng,Math.floor(rng()*2**32)));
+    }
+    return {seed,routes,index:0};
+  }
+
+  function nextExpeditionStage() {
+    expedition.index++;
+    showBriefing();
+  }
 
   function openNextSector(id) {
     missionId=id;
@@ -562,7 +712,9 @@
   }
 
   function makeLevel() {
-    const {seed,ledges,profile,spawn,marker,fuelCost,defaultBeacon}=mission();
+    const {seed,ledges,profile,spawn,marker,fuelCost,defaultBeacon,height=normalHeight,width=normalWidth}=mission();
+    H=height;
+    W=width;
     const rng = random(seed);
     pads = ledges.map(({centre,width,...pad})=>{
       const w = width*config().width;
@@ -570,7 +722,7 @@
     });
     const [alpha,bravo]=pads;
     terrain = profile(alpha,bravo).map(([x,y])=>({x,y}));
-    stars = Array.from({length:155},()=>({x:rng()*W,y:rng()*H*.78,size:.5+rng()*1.45,blink:rng()*6.2}));
+    stars = Array.from({length:155},()=>({x:rng()*W,y:rng()*Math.min(H,850)*.78,size:.5+rng()*1.45,blink:rng()*6.2}));
     dust = Array.from({length:112},()=>({x:rng()*W,y:H*.45+rng()*325,r:.5+rng()*1.2}));
     rocks = Array.from({length:30},(_,i)=>{
       const x=(i+rng())*W/30;
@@ -589,7 +741,7 @@
     ship={...spawn,a:0,spin:0,fuel:config().fuel-fuelCost,flame:0,compression:0};
     beaconIndex=defaultBeacon;
     beacon=readBeacon();
-    best=missionId==='demo'?0:savedBest(bestKey());
+    best=missionId==='demo' || isExpedition()?0:savedBest(bestKey());
     score=0;
     effectAge=0;
     effectsTime=0;
@@ -631,14 +783,17 @@
     const altitude=Math.max(0,floorAt(ship.x,flightTime,ship.y+20)-ship.y-20);
     const {approach:start,direction=1}=mission();
     const approachProgress=clamp((ship.x-start)*direction/150,0,1);
-    const approach=approachProgress*clamp(1-altitude/190,0,1);
+    const inCavern=isDeep() && mission().outcrops;
+    const clearForApproach=!inCavern || pads.some(pad=>Math.abs(ship.x-padX(pad)-pad.w/2)<pad.w/2+45);
+    const approach=!clearForApproach?0:(isDeep()?1:approachProgress)*clamp(1-altitude/190,0,1);
     camera.zoom=lerp(camera.zoom,1+approach*.44,blend);
     const {width,height}=viewSize();
     const lead=(1-approach)*clamp(Math.sign(ship.vx)*Math.min(62,Math.abs(ship.vx)*2)+ship.vx*.98,-162,162);
     const showOutcrops=missionId==='demo' && ui.game.width/dpr<660 && Math.abs(ship.x-830)<140;
     const focusX=showOutcrops?lerp(ship.x+lead,740,Math.min(1,approach*1.15)):ship.x+lead;
     const x=width>=W?W/2:clamp(focusX,width/2,W-width/2);
-    const y=height>=H?H/2:clamp(ship.y+height*.18,height/2,H-height/2);
+    const descentLead=isDeep()?clamp(.18+Math.max(0,ship.vy)/460,.18,.39):.18;
+    const y=height>=H?H/2:clamp(ship.y+height*descentLead,height/2,H-height/2);
     camera.x=width>=W?W/2:clamp(lerp(camera.x,x,blend),width/2,W-width/2);
     camera.y=height>=H?H/2:clamp(lerp(camera.y,y,blend),height/2,H-height/2);
   }
@@ -686,6 +841,7 @@
     demoPractice=false;
     missionId=selection==='campaign'?'ridge':selection;
     if (missionId==='daily') refreshDaily();
+    if (isExpedition()) expedition=makeExpedition(Math.floor(Math.random()*2**32));
     showBriefing(focus);
   }
 
@@ -700,11 +856,12 @@
     refreshDifficulty();
     ui.missionSelect.value=selection;
     const campaignIntro=selection==='campaign' && !campaign;
+    const expeditionIntro=isExpedition() && !campaign;
     showOverlay({
-      label:campaign?'CAMPAIGN · SECTOR '+(sectorIndex()+1)+' / '+sectorOrder.length:'FLIGHT CONTROL / STANDBY',
-      title:campaignIntro?'Six-sector <em>campaign</em>':mission().title,
-      description:campaignIntro?'Land in all six sectors. Each crash costs '+crashCost+' points. Start at Ridge Crossing.':mission().brief,
-      choose:!campaign,button:campaignIntro?'Start campaign →':missionId==='demo'?'Watch landing →':'Start descent →',action:begin,
+      label:campaign?(isExpedition()?'EXPEDITION · STAGE '+(expedition.index+1)+' / '+runLength():'CAMPAIGN · SECTOR '+(sectorIndex()+1)+' / '+runLength()):'FLIGHT CONTROL / STANDBY',
+      title:campaignIntro?'Six-sector <em>campaign</em>':expeditionIntro?'Deep Drop <em>expedition</em>':mission().title,
+      description:campaignIntro?'Land in all six sectors. Each crash costs '+crashCost+' points. Start at Ridge Crossing.':expeditionIntro?'Fly 12 generated stages. First up: '+mission().name+'. Each crash costs '+crashCost+' points.':mission().brief,
+      choose:!campaign,button:campaignIntro?'Start campaign →':expeditionIntro?'Start expedition →':missionId==='demo'?'Watch landing →':'Start descent →',action:begin,
       secondary:!campaign && missionId!=='demo'?'Watch demo':'',
       secondaryAction:openDemo,
       hint:'↑ / SPACE thrust · ← → rotate · P pause'
@@ -741,7 +898,7 @@
   }
 
   function begin() {
-    if (selection==='campaign' && !campaign) campaign={points:0,crashes:0,cleared:0};
+    if ((selection==='campaign' || isExpedition()) && !campaign) campaign={points:0,crashes:0,cleared:0};
     if (missionId==='daily' && refreshDaily()) makeLevel();
     fly();
     cue('start');
@@ -783,11 +940,11 @@
   }
 
   function padX(pad,time=flightTime) {
-    return pad.travel ? pad.x+pad.travel*Math.sin(time*pad.rate) : pad.x;
+    return pad.travel ? pad.x+pad.travel*Math.sin(time*pad.rate+(pad.phase || 0)) : pad.x;
   }
 
   function padSpeed(pad,time=flightTime) {
-    return pad?.travel ? pad.travel*pad.rate*Math.cos(time*pad.rate) : 0;
+    return pad?.travel ? pad.travel*pad.rate*Math.cos(time*pad.rate+(pad.phase || 0)) : 0;
   }
 
   // A vertical slice can contain both air and rock beneath an overhang.
@@ -807,8 +964,9 @@
       const left=padX(pad,time);
       if (pad.travel && x>=left && x<=left+pad.w) height=Math.min(height,pad.y);
     }
-    if (missionId==='demo') {
-      for (const polygon of demoMission.outcrops) {
+    const outcrops=mission().outcrops;
+    if (outcrops) {
+      for (const polygon of outcrops) {
         const edges=rockEdges(polygon,x);
         for (let index=0;index+1<edges.length;index+=2) {
           if (fromY<=edges[index+1]) height=Math.min(height,edges[index]);
@@ -830,7 +988,8 @@
     const path=[];
     let prevX=ship.x, prevY=ship.y+20, prevT=0;
     // Prediction follows the current velocity and gravity, with the engine off.
-    for (let i=1;i<=105;i++) {
+    const steps=isDeep()?180:105;
+    for (let i=1;i<=steps;i++) {
       const t=i*.085;
       const x=ship.x+ship.vx*t;
       const y=ship.y+20+ship.vy*t+.5*g*t*t;
@@ -954,9 +1113,9 @@
     const bonus={Precision:1.6,Smooth:1.25,Rough:1}[grade];
     const earned=Math.round((240+ship.fuel*9)*pad.mult*bonus*config().points);
     score+=earned;
-    const key=bestKey();
-    best=Math.max(best,savedBest(key));
-    const newBest=score>best;
+    const key=isExpedition()?null:bestKey();
+    if (key) best=Math.max(best,savedBest(key));
+    const newBest=key && score>best;
     if (newBest) {
       best=score;
       save(key,best);
@@ -966,7 +1125,7 @@
     if (campaign) {
       campaign.points+=earned;
       campaign.cleared++;
-      if (sectorIndex()===sectorOrder.length-1) {
+      if (campaign.cleared===runLength()) {
         const total=campaignTotal();
         campaignBest=Math.max(campaignBest,savedBest(campaignKey()));
         if (total>campaignBest) {
@@ -1016,27 +1175,28 @@
     if (mode==='touchdown') {
       mode='landed';
       const {pad,grade,metrics,earned}=impact;
-      const rescue=missionId==='rescue';
+      const rescue=missionId==='rescue' || missionId==='deepCavern' || mission().kind==='deepCavern';
       const reachedCrew=rescue && pad.name==='BRAVO';
       const title=rescue ? (reachedCrew?'Crew <em>reached</em>':'Shelter <em>secured</em>') : grade+' <em>landing</em>';
       const outcome=rescue ? (reachedCrew?'The crew has made contact at Bravo. ':'You landed safely at Alpha. The crew is still at Bravo. ') : '';
       const isDaily=missionId==='daily';
-      const next=isDaily?null:sectorOrder[sectorIndex()+1];
-      if (campaign && !next) {
+      const next=sectorIndex()>=0?sectorOrder[sectorIndex()+1]:null;
+      const nextDeep=isDeep() && !isExpedition()?deepOrder[deepOrder.indexOf(missionId)+1]:null;
+      if (campaign && campaign.cleared===runLength()) {
         const count=campaign.crashes;
-        showOverlay({label:impact.record?'NEW CAMPAIGN BEST':'SIX SECTORS COMPLETE',
-          title:'Campaign <em>complete</em>',
+        showOverlay({label:impact.record?(isExpedition()?'NEW EXPEDITION BEST':'NEW CAMPAIGN BEST'):(isExpedition()?'12 STAGES COMPLETE':'SIX SECTORS COMPLETE'),
+          title:isExpedition()?'Expedition <em>complete</em>':'Campaign <em>complete</em>',
           description:pretty(campaign.points)+' landing points − '+pretty(count*crashCost)+' crash penalty ('+count+' '+(count===1?'crash':'crashes')+').',
           result:pretty(campaignTotal())+' RUN TOTAL · '+pretty(campaignBest)+' BEST',
-          button:'New campaign →',action:setReady});
+          button:isExpedition()?'New expedition →':'New campaign →',action:setReady});
       } else {
         const summary=(rescue?grade.toUpperCase()+' · ':'')+'+'+pretty(earned)+' POINTS · PAD ×'+pad.mult;
-        showOverlay({label:pad.name+(isDaily?' / '+daily.date:next?' / TOUCHDOWN CONFIRMED':' / FINAL SECTOR COMPLETE'),title,
+        showOverlay({label:pad.name+(isDaily?' / '+daily.date:isDeep()?' / '+mission().name.toUpperCase():next?' / TOUCHDOWN CONFIRMED':' / FINAL SECTOR COMPLETE'),title,
           description:outcome+metrics.down.toFixed(1)+' m/s vertical · '+metrics.side.toFixed(1)+' m/s sideways'+(pad.travel?' relative to the rail':'')+' · '+metrics.angle.toFixed(1)+'° tilt · '+Math.round(ship.fuel)+'% fuel left.',
           result:summary,
-          button:isDaily?'Fly daily again ↻':next?'Next · '+missions[next].name+' →':'Mission select →',
-          action:isDaily?retry:next?()=>openNextSector(next):setReady,
-          secondary:campaign?'':isDaily?'Flight plan':'Fly this sector again',
+          button:isDaily?'Fly daily again ↻':isExpedition()?'Next stage →':nextDeep?'Next · '+deepRoutes[nextDeep].name+' →':next?'Next · '+missions[next].name+' →':'Mission select →',
+          action:isDaily?retry:isExpedition()?nextExpeditionStage:nextDeep?()=>openNextSector(nextDeep):next?()=>openNextSector(next):setReady,
+          secondary:campaign?'':isDaily?'Flight plan':isDeep()?'Fly this route again':'Fly this sector again',
           secondaryAction:isDaily?setReady:retry});
       }
     } else {
@@ -1075,8 +1235,9 @@
     ship.a = Math.atan2(Math.sin(ship.a),Math.cos(ship.a));
     const firing=(automatic?demoThrust:held('thrust')) && ship.fuel>0;
     ship.flame += ((firing?1:0)-ship.flame)*(1-Math.exp(-dt*(firing?15:20)));
-    const burn=Math.min(ship.fuel,config().burn*dt);
-    const impulse=firing ? 63*ship.flame*burn/config().burn : 0;
+    const burnRate=config().burn/(mission().tankScale || 1);
+    const burn=Math.min(ship.fuel,burnRate*dt);
+    const impulse=firing ? 63*ship.flame*burn/burnRate : 0;
     if (firing) ship.fuel-=burn;
     ship.vx+=Math.sin(ship.a)*impulse;
     ship.vy+=gravity()*dt-Math.cos(ship.a)*impulse;
@@ -1166,12 +1327,13 @@
     ctx.globalAlpha=.12;ctx.beginPath();ctx.ellipse(0,0,radius*1.66,14,0,0,Math.PI*2);ctx.stroke();
     ctx.restore();
   }
-  function drawDemoOutcrops(theme) {
-    const stone=ctx.createLinearGradient(0,445,0,589);
-    stone.addColorStop(0,'#253e45');
-    stone.addColorStop(1,theme.base);
+  function drawOutcrops(theme,polygons) {
     ctx.save();
-    for (const polygon of demoMission.outcrops) {
+    for (const polygon of polygons) {
+      const bottom=Math.max(...polygon.map(([,y])=>y));
+      const stone=ctx.createLinearGradient(0,Math.max(0,bottom-150),0,bottom);
+      stone.addColorStop(0,theme.base);
+      stone.addColorStop(1,theme.grid);
       ctx.beginPath();
       polygon.forEach(([x,y],index)=>index?ctx.lineTo(x,y):ctx.moveTo(x,y));
       ctx.closePath();
@@ -1179,9 +1341,9 @@
       ctx.strokeStyle=theme.ridge;ctx.lineWidth=1.6;ctx.stroke();
       ctx.save();ctx.clip();
       ctx.globalAlpha=.24;ctx.lineWidth=.85;
-      for (let y=468;y<590;y+=13) {
+      for (let y=Math.max(0,bottom-140);y<bottom;y+=13) {
         ctx.beginPath();
-        for (let x=530;x<=955;x+=14) ctx.lineTo(x,y+2.7*Math.sin(x*.12+y));
+        for (let x=0;x<=W;x+=14) ctx.lineTo(x,y+2.7*Math.sin(x*.12+y));
         ctx.stroke();
       }
       ctx.restore();
@@ -1233,7 +1395,8 @@
     ctx.beginPath();ctx.moveTo(terrain[0].x,terrain[0].y);
     for(let i=1;i<terrain.length;i++)ctx.lineTo(terrain[i].x,terrain[i].y);
     ctx.stroke();ctx.restore();
-    if (missionId==='demo') drawDemoOutcrops(theme);
+    const outcrops=mission().outcrops;
+    if (outcrops) drawOutcrops(theme,outcrops);
     ctx.save();
     ctx.strokeStyle='#a2b9c398';ctx.lineWidth=1;
     ctx.setLineDash([3,4]);
@@ -1343,13 +1506,16 @@
     map.clearRect(0,0,width,height);
     const left=x(clamp(camera.x-view.width/2,0,W));
     const right=x(clamp(camera.x+view.width/2,0,W));
-    map.fillStyle='#213a3e';map.fillRect(left,2,right-left,height-4);
-    map.strokeStyle='#40636a';map.strokeRect(left+.5,2.5,right-left-1,height-5);
+    const top=isDeep()?y(clamp(camera.y-view.height/2,0,H))-2:2;
+    const bottom=isDeep()?y(clamp(camera.y+view.height/2,0,H))+2:height-2;
+    map.fillStyle='#213a3e';map.fillRect(left,top,right-left,bottom-top);
+    map.strokeStyle='#40636a';map.strokeRect(left+.5,top+.5,right-left-1,bottom-top-1);
     map.beginPath();map.moveTo(x(0),y(terrain[0].y));
     for (const p of terrain) map.lineTo(x(p.x),y(p.y));
     map.strokeStyle='#82baa9';map.lineWidth=1;map.stroke();
-    if (missionId==='demo') {
-      for (const polygon of demoMission.outcrops) {
+    const outcrops=mission().outcrops;
+    if (outcrops) {
+      for (const polygon of outcrops) {
         map.beginPath();
         polygon.forEach(([px,py],index)=>index?map.lineTo(x(px),y(py)):map.moveTo(x(px),y(py)));
         map.closePath();map.stroke();
@@ -1422,15 +1588,15 @@
       setText(ui.scoreNote,'Training flights are unscored.');
       return;
     }
-    const isCampaign=selection==='campaign';
+    const isCampaign=selection==='campaign' || isExpedition();
     const isDaily=missionId==='daily';
     const total=campaign?campaignTotal():score;
     const record=isCampaign?campaignBest:best;
     const currentLabel=isCampaign?'Run total':'Flight score';
-    const recordLabel=isCampaign?'Campaign best':isDaily?'Best today':'Sector best';
+    const recordLabel=isExpedition()?'Expedition best':isCampaign?'Campaign best':isDaily?'Best today':'Sector best';
     const sectors=campaign?.cleared ?? 0;
-    const progressLabel=isCampaign?'Sectors cleared':record>total?'Points to match':'Record';
-    const progress=isCampaign?sectors+' / '+sectorOrder.length:record>total?pretty(record-total):
+    const progressLabel=isExpedition()?'Stages cleared':isCampaign?'Sectors cleared':record>total?'Points to match':'Record';
+    const progress=isCampaign?sectors+' / '+runLength():record>total?pretty(record-total):
       scoreEvent?.newBest && total===record?'New best':record?'Matched':'Open';
     setText(ui.scoreLabel,currentLabel);
     setText(ui.bestLabel,recordLabel);
@@ -1486,13 +1652,15 @@
     setText(ui.estimate,mode==='playing'?projection?.label || '—':'—');
     ui.estimate.className='stat-value '+(mode==='playing'?projection?.kind || '':'');
     updateDemoCoach(altitude);
-    setText(ui.sectorName,missionId==='demo'?'GUIDED LANDING':missionId==='daily'?'DAILY DESCENT':(sectorIndex()+1)+'/'+sectorOrder.length+' · '+mission().name.toUpperCase());
+    setText(ui.sectorName,missionId==='demo'?'GUIDED LANDING':missionId==='daily'?'DAILY DESCENT':isExpedition()?(expedition.index+1)+'/'+runLength()+' · '+mission().name.toUpperCase():isDeep()?'DEEP DROP · '+mission().name.toUpperCase():(sectorIndex()+1)+'/'+sectorOrder.length+' · '+mission().name.toUpperCase());
     setText(ui.terrainName,mission().location);
     ui.beaconBtn.disabled=mode!=='playing';
     ui.beaconBtn.dataset.signal=mode==='playing'?beacon.signal:'off';
     const beaconName=pads[beaconIndex]?.name || 'OFF';
     setText(ui.beaconBtn,mode==='playing' && beacon.signal==='aligned' ? beaconName+' READY' : 'BEACON '+beaconName);
-    const alerts=mode==='playing' && (low || (altitude<70 && ship.vy>vertical));
+    const brakingDistance=isDeep()?ship.vy**2/(2*(63-gravity()))+ship.vy*.42:70;
+    const brake=ship.vy>vertical && altitude<Math.max(70,brakingDistance);
+    const alerts=mode==='playing' && (low || brake);
     const label={ready:name.toUpperCase(),playing:flightStatus(),paused:'HOLD',manual:'FLIGHT MANUAL',
       touchdown:'TOUCHDOWN',landed:impact?.grade?.toUpperCase(),breaking:'SIGNAL LOST',crashed:'SIGNAL LOST'};
     const warning=ship.fuel<=0?'FUEL EMPTY':ship.fuel<=10?'FUEL CRITICAL':low?'LOW FUEL':'BRAKE NOW';
@@ -1573,23 +1741,30 @@
         noise.loop=true;
         const bass=audio.createBiquadFilter();
         bass.type='lowpass';
-        bass.frequency.value=145;
+        bass.frequency.value=175;
         const bassGain=audio.createGain();
-        bassGain.gain.value=1.25;
+        bassGain.gain.value=1.4;
+        const enginePulse=audio.createGain();
+        enginePulse.gain.value=.83;
+        const flutter=audio.createOscillator();
+        flutter.frequency.value=23;
+        const flutterDepth=audio.createGain();
+        flutterDepth.gain.value=.18;
+        flutter.connect(flutterDepth).connect(enginePulse.gain);
         engineFilter=audio.createBiquadFilter();
         engineFilter.type='bandpass';
         engineFilter.frequency.value=540;
         engineFilter.Q.value=.62;
         const hissGain=audio.createGain();
-        hissGain.gain.value=.36;
+        hissGain.gain.value=.29;
         engineRumble=audio.createOscillator();
         engineRumble.type='triangle';
-        engineRumble.frequency.value=43;
+        engineRumble.frequency.value=38;
         const rumbleGain=audio.createGain();
-        rumbleGain.gain.value=.09;
+        rumbleGain.gain.value=.12;
         engineGain=audio.createGain();
         engineGain.gain.value=0;
-        noise.connect(bass).connect(bassGain).connect(engineGain);
+        noise.connect(bass).connect(bassGain).connect(enginePulse).connect(engineGain);
         noise.connect(engineFilter).connect(hissGain).connect(engineGain);
         engineRumble.connect(rumbleGain).connect(engineGain);
         engineGain.connect(master);
@@ -1605,6 +1780,7 @@
         beaconOscillator.start();
         noise.start();
         engineRumble.start();
+        flutter.start();
       }
       if (audio.state!=='running') audio.resume().catch(()=>{});
     } catch {
@@ -1625,9 +1801,9 @@
     if (!engineGain || lastPower===power) return;
     lastPower=power;
     const t=audio.currentTime;
-    target(engineGain.gain,power*.67,t,power?.065:.11);
-    target(engineFilter.frequency,360+530*power,t,.09);
-    target(engineRumble.frequency,43+14*power,t,.11);
+    target(engineGain.gain,power*.67,t,power?.04:.085);
+    target(engineFilter.frequency,340+410*power,t,.09);
+    target(engineRumble.frequency,38+13*power,t,.11);
   }
 
   function setBeaconVolume(volume) {

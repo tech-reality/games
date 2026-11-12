@@ -40,12 +40,12 @@ h2 { margin:7px 0 8px; font-size:clamp(22px,3vw,30px); line-height:1.18; letter-
 figure { margin:0; overflow:hidden; border:1px solid var(--line); border-radius:8px; background:#081320; }
 figure img { display:block; width:100%; height:auto; }
 figcaption { padding:8px 12px; color:var(--muted); font:700 10px/1.5 var(--mono); letter-spacing:.12em; text-transform:uppercase; border-top:1px solid var(--line); }
-.briefing { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:18px 0; }
+.briefing { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:18px 0; }
 .briefing article,.essentials { border:1px solid var(--line); border-radius:8px; padding:18px 22px; background:var(--panel); }
 .briefing p:not(.kicker),.essentials p { color:var(--muted); }
 .gallery { margin:24px 0; }
 .gallery h2 { margin-bottom:12px; }
-.gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.gallery-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
 .gallery a { display:block; }
 .gallery a:focus-visible { outline-offset:-3px; }
 .essentials { margin-bottom:32px; }

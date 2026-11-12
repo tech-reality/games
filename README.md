@@ -6,8 +6,8 @@ Free games and side projects, separate from the CoreCrawl apps.
   - Play in your browser: https://tech-reality.github.io/games/silent-summit/
   - Download for offline play: https://tech-reality.github.io/games/silent-summit/silent-summit.zip (unzip it, then open `silent-summit.html` in Safari or Chrome)
 
-- **Moon Descent** is a free lunar landing game with six sectors, daily routes, a guided landing demo and personal best scores.
+- **Moon Descent** is a free lunar landing game with a six-sector campaign, a 12-stage Deep Drop expedition and daily routes.
   - Play in your browser: https://tech-reality.github.io/games/moon-descent/
-  - Download for offline play: https://tech-reality.github.io/games/moon-descent/moon-descent-v1.11.zip (unzip it, then open `index.html`)
+  - Download for offline play: https://tech-reality.github.io/games/moon-descent/moon-descent-v1.13.zip (unzip it, then open `index.html`)
 
 Questions or feedback: support@tech-reality.co.uk
