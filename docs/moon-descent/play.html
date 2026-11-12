@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0a1116">
-  <meta name="description" content="Moon Descent v1.10. A lunar landing campaign with a live scoreboard and daily route.">
-  <title>Moon Descent v1.10 · Campaign and Daily Descent</title>
+  <meta name="description" content="Moon Descent v1.11. A lunar landing campaign with a live scoreboard and daily route.">
+  <title>Moon Descent v1.11 · Campaign and Daily Descent</title>
   <style>
     :root {
       color-scheme:dark;
@@ -45,6 +45,10 @@
     #fuelFill.low { background:var(--danger); }
     .viewport { position:relative; background:#081320; }
     #game { display:block; width:100%; height:clamp(400px,58vh,660px); }
+    .demo-coach { position:absolute; z-index:1; inset:8px 8px auto; width:fit-content; max-width:calc(100% - 16px);
+      display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; padding:6px 9px; border:1px solid #567077;
+      border-radius:5px; background:#0b181ff2; color:var(--ink); font-size:12px; pointer-events:none; }
+    .demo-coach b { color:var(--mint); font:700 10px var(--mono); }
     .viewport::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:.22; background:repeating-linear-gradient(transparent 0 3px,#050a1160 4px); }
     .overlay { position:absolute; inset:0; display:grid; place-items:center; z-index:1; padding:10px; overflow:auto; background:#050c1577; }
     .overlay-panel { width:min(100%,464px); padding:22px 24px; background:linear-gradient(145deg,#14272ef8,#0b161df7); border:1px solid #476c6d; border-radius:7px; box-shadow:0 12px 40px #0009; }
@@ -170,7 +174,7 @@
     <header>
       <div class="identity">
         <svg aria-hidden="true" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3 9 19h14L16 3ZM11 19l-5 6m15-6 5 6M5 26h6m10 0h6M13 14h6"/><circle cx="16" cy="17" r="2"/></svg>
-        <div><div class="micro">v1.10 lunar console</div><h1>MOON <span class="accent">DESCENT</span></h1></div>
+        <div><div class="micro">v1.11 lunar console</div><h1>MOON <span class="accent">DESCENT</span></h1></div>
       </div>
       <div class="actions">
         <button id="soundBtn" aria-pressed="true" aria-label="Sound">♪ On</button>
@@ -188,12 +192,16 @@
       </div>
       <div class="viewport">
         <canvas id="game" tabindex="-1" aria-label="Lunar terrain, marked landing pads and player spacecraft">Moon Descent requires a browser with Canvas support.</canvas>
+        <div class="demo-coach" id="demoCoach" hidden>
+          <b id="demoStep"></b><span id="demoInstruction" role="status"></span><b id="demoInput"></b>
+        </div>
         <div class="overlay" id="overlay">
           <div class="overlay-panel" role="dialog" aria-labelledby="overlayTitle">
             <div class="micro" id="overlayLabel"></div>
             <label id="missionPicker" hidden><span class="micro">Flight plan</span>
               <select id="missionSelect">
                 <option value="campaign">Six-sector campaign</option>
+                <option value="demo">Guided landing demo</option>
                 <option value="daily">Daily Descent</option>
                 <optgroup label="Practise a sector">
                 <option value="ridge">Ridge Crossing</option>
@@ -311,7 +319,7 @@
   let best = 0;
   let beaconIndex = -1;
   let beacon = {signal:'off',pan:0,strength:0};
-  const config = () => difficulties[difficulty];
+  const config = () => difficulties[missionId==='demo'?'cadet':difficulty];
   const gravity = () => config().gravity;
   let lastFrame = null, accumulator = 0, effectsTime = 0, flightTime = 0;
   let terrain = [], pads = [], stars = [], dust = [], farRidge = [], rocks = [], particles = [];
@@ -443,12 +451,37 @@
         grid:'#6d9175',stars:'224,251,218',haze:'#719c5445'}
     }
   };
+  const demoMission={
+    name:'Guided landing demo', title:'Guided <em>landing</em>', location:'TRANQUILLITY / TRAINING BASIN',
+    flightLabel:'TRAINING FLIGHT', brief:'Watch a landing on top of the 7, then fly the same descent yourself.',
+    marker:{x:1085,y:447,text:'EAST RIDGE',short:'RIDGE'},
+    approach:685, defaultBeacon:0, seed:704, planet:1010,
+    spawn:{x:725,y:177,vx:0,vy:8}, fuelCost:0,
+    ledges:[
+      {centre:830,y:445,width:164,name:'ALPHA',mult:1},
+      {centre:1245,y:455,width:128,name:'BRAVO',mult:1}
+    ],
+    outcrops:[
+      [[555,445],[695,445],[695,541],[682,566],[662,580],[629,589],[594,586],[565,574],
+        [549,554],[541,532],[578,532],[584,548],[600,556],[625,557],[643,550],[652,537],
+        [652,479],[555,479]],
+      [[724,445],[936,445],[936,477],[908,502],[873,539],[825,589],[775,589],[819,547],
+        [852,514],[885,481],[724,481]]
+    ],
+    profile:(_alpha,bravo)=>[
+      [0,441],[154,428],[252,456],[354,424],[436,479],[481,532],[523,575],[560,588],
+      [624,585],[681,589],[749,585],[795,587],[834,585],[887,589],[949,572],[986,540],
+      [1027,494],[1058,468],[1085,447],[1117,461],[bravo.x,bravo.y],[bravo.x+bravo.w,bravo.y],[1372,462],[W,425]
+    ],
+    theme:missions.ridge.theme
+  };
   const sectorOrder=Object.keys(missions);
   let selection=get(selectionKey);
-  const validSelection = id => id==='campaign' || id==='daily' || Object.hasOwn(missions,id);
+  const validSelection = id => id==='campaign' || id==='daily' || id==='demo' || Object.hasOwn(missions,id);
   if (!validSelection(selection)) selection='campaign';
   let missionId='ridge';
-  const mission=()=>missionId==='daily'?daily:missions[missionId];
+  const mission=()=>missionId==='demo'?demoMission:missionId==='daily'?daily:missions[missionId];
+  let demoReturn='campaign', demoPractice=false, demoThrust=false, demoSteer=0;
   const sectorIndex=()=>sectorOrder.indexOf(missionId);
 
   function openNextSector(id) {
@@ -551,10 +584,12 @@
     });
     particles=[];
     flightTime=0;
+    demoSteer=0;
+    demoThrust=false;
     ship={...spawn,a:0,spin:0,fuel:config().fuel-fuelCost,flame:0,compression:0};
     beaconIndex=defaultBeacon;
     beacon=readBeacon();
-    best=savedBest(bestKey());
+    best=missionId==='demo'?0:savedBest(bestKey());
     score=0;
     effectAge=0;
     effectsTime=0;
@@ -593,14 +628,16 @@
   }
 
   function followCamera(blend) {
-    const altitude=Math.max(0,groundAt(ship.x)-ship.y-20);
+    const altitude=Math.max(0,floorAt(ship.x,flightTime,ship.y+20)-ship.y-20);
     const {approach:start,direction=1}=mission();
     const approachProgress=clamp((ship.x-start)*direction/150,0,1);
     const approach=approachProgress*clamp(1-altitude/190,0,1);
     camera.zoom=lerp(camera.zoom,1+approach*.44,blend);
     const {width,height}=viewSize();
     const lead=(1-approach)*clamp(Math.sign(ship.vx)*Math.min(62,Math.abs(ship.vx)*2)+ship.vx*.98,-162,162);
-    const x=width>=W?W/2:clamp(ship.x+lead,width/2,W-width/2);
+    const showOutcrops=missionId==='demo' && ui.game.width/dpr<660 && Math.abs(ship.x-830)<140;
+    const focusX=showOutcrops?lerp(ship.x+lead,740,Math.min(1,approach*1.15)):ship.x+lead;
+    const x=width>=W?W/2:clamp(focusX,width/2,W-width/2);
     const y=height>=H?H/2:clamp(ship.y+height*.18,height/2,H-height/2);
     camera.x=width>=W?W/2:clamp(lerp(camera.x,x,blend),width/2,W-width/2);
     camera.y=height>=H?H/2:clamp(lerp(camera.y,y,blend),height/2,H-height/2);
@@ -627,7 +664,7 @@
     ui.secondaryAction.onclick = secondaryAction;
     ui.overlayHint.hidden = !hint;
     ui.overlayHint.textContent = hint;
-    ui.difficulty.hidden = !choose;
+    ui.difficulty.hidden = !choose || missionId==='demo';
     ui.missionPicker.hidden = !choose;
     ui.overlayLabel.hidden = choose;
     ui.overlay.hidden = false;
@@ -636,7 +673,7 @@
 
   function refreshDifficulty() {
     const {name,note} = config();
-    document.querySelector('input[name="difficulty"][value="'+difficulty+'"]').checked = true;
+    document.querySelector('input[name="difficulty"][value="'+name.toLowerCase()+'"]').checked = true;
     ui.difficultyNote.textContent = note;
     ui.best.title = name+' high score for '+(selection==='campaign'?'the campaign':mission().name);
     updateScoreboard();
@@ -646,6 +683,7 @@
   function setReady(focus=true) {
     campaign=null;
     scoreEvent=null;
+    demoPractice=false;
     missionId=selection==='campaign'?'ridge':selection;
     if (missionId==='daily') refreshDaily();
     showBriefing(focus);
@@ -666,9 +704,27 @@
       label:campaign?'CAMPAIGN · SECTOR '+(sectorIndex()+1)+' / '+sectorOrder.length:'FLIGHT CONTROL / STANDBY',
       title:campaignIntro?'Six-sector <em>campaign</em>':mission().title,
       description:campaignIntro?'Land in all six sectors. Each crash costs '+crashCost+' points. Start at Ridge Crossing.':mission().brief,
-      choose:!campaign,button:campaignIntro?'Start campaign →':'Start descent →',action:begin,
+      choose:!campaign,button:campaignIntro?'Start campaign →':missionId==='demo'?'Watch landing →':'Start descent →',action:begin,
+      secondary:!campaign && missionId!=='demo'?'Watch demo':'',
+      secondaryAction:openDemo,
       hint:'↑ / SPACE thrust · ← → rotate · P pause'
     },focus);
+  }
+
+  function openDemo() {
+    if (selection!=='demo') demoReturn=selection;
+    selection='demo';
+    setReady();
+  }
+
+  function exitDemo() {
+    selection=demoReturn;
+    setReady();
+  }
+
+  function practiseDemo() {
+    demoPractice=true;
+    retry();
   }
 
   function fly() {
@@ -734,11 +790,30 @@
     return pad?.travel ? pad.travel*pad.rate*Math.cos(time*pad.rate) : 0;
   }
 
-  function floorAt(x,time=flightTime) {
+  // A vertical slice can contain both air and rock beneath an overhang.
+  function rockEdges(polygon,x) {
+    const heights=[];
+    for (let index=0;index<polygon.length;index++) {
+      const [ax,ay]=polygon[index];
+      const [bx,by]=polygon[(index+1)%polygon.length];
+      if (x>=Math.min(ax,bx) && x<Math.max(ax,bx)) heights.push(lerp(ay,by,(x-ax)/(bx-ax)));
+    }
+    return heights.sort((a,b)=>a-b);
+  }
+
+  function floorAt(x,time=flightTime,fromY=-Infinity) {
     let height=groundAt(x);
     for (const pad of pads) {
       const left=padX(pad,time);
       if (pad.travel && x>=left && x<=left+pad.w) height=Math.min(height,pad.y);
+    }
+    if (missionId==='demo') {
+      for (const polygon of demoMission.outcrops) {
+        const edges=rockEdges(polygon,x);
+        for (let index=0;index+1<edges.length;index+=2) {
+          if (fromY<=edges[index+1]) height=Math.min(height,edges[index]);
+        }
+      }
     }
     return height;
   }
@@ -760,19 +835,20 @@
       const x=ship.x+ship.vx*t;
       const y=ship.y+20+ship.vy*t+.5*g*t*t;
       if (x<22 || x>W-22) return {path,label:'EDGE',kind:'warning'};
-      const floor=floorAt(x,flightTime+t);
+      const floor=floorAt(x,flightTime+t,y);
       if (y>=floor) {
         let lo=0, hi=1;
         for (let j=0;j<8;j++) {
           const mid=(lo+hi)/2;
           const mx=lerp(prevX,x,mid), my=lerp(prevY,y,mid);
-          if (my>=floorAt(mx,flightTime+lerp(prevT,t,mid))) hi=mid;
+          if (my>=floorAt(mx,flightTime+lerp(prevT,t,mid),my)) hi=mid;
           else lo=mid;
         }
         const hitX=lerp(prevX,x,hi);
         const hitTime=flightTime+lerp(prevT,t,hi);
-        const hitY=floorAt(hitX,hitTime);
-        const pad=padAt(hitX,22,hitTime);
+        const hitY=floorAt(hitX,hitTime,lerp(prevY,y,hi));
+        const candidate=padAt(hitX,22,hitTime);
+        const pad=candidate?.y===hitY?candidate:null;
         return {path,x:hitX,y:hitY,label:pad?.name || 'ROCK',kind:pad?'good':'warning'};
       }
       path.push({x,y});
@@ -827,11 +903,11 @@
   function evaluateTouchdown() {
     const feet=feetPoints.map(transformed);
     const hull=hullPoints.map(transformed);
-    const hitHull=hull.some(p=>p.y>=floorAt(p.x));
-    const groundedFeet=feet.filter(p=>p.y>=floorAt(p.x));
+    const hitHull=hull.some(p=>p.y>=floorAt(p.x,flightTime,p.y));
+    const groundedFeet=feet.filter(p=>p.y>=floorAt(p.x,flightTime,p.y));
     if (!hitHull && !groundedFeet.length) return;
     const pad=pads.find(p=>feetOverPad(feet,p) &&
-      groundedFeet.some(f=>f.y>=p.y && Math.abs(floorAt(f.x)-p.y)<.05));
+      groundedFeet.some(f=>f.y>=p.y && Math.abs(floorAt(f.x,flightTime,f.y)-p.y)<.05));
     const {vertical,lateral,tilt,spin}=config();
     const metrics=landingMetrics(pad);
     if (hitHull || !pad) crash(missionId==='ridge'&&ship.x<mission().approach?'The ridge caught the ship. Burn earlier to clear the crest.':'Keep both landing feet over a gold platform.');
@@ -870,6 +946,11 @@
     setEngine(0);
     silenceBeacon();
     scatter('dust',reducedMotion.matches?9:27,ship.x,pad.y-1,85);
+    if (missionId==='demo') {
+      cue('land',grade);
+      updateHud();
+      return;
+    }
     const bonus={Precision:1.6,Smooth:1.25,Rough:1}[grade];
     const earned=Math.round((240+ship.fuel*9)*pad.mult*bonus*config().points);
     score+=earned;
@@ -917,6 +998,21 @@
   }
 
   function finishImpact() {
+    if (missionId==='demo') {
+      const landed=mode==='touchdown';
+      mode=landed?'landed':'crashed';
+      showOverlay({
+        label:'TRAINING BASIN',title:landed?'Landing <em>complete</em>':'Try <em>again</em>',
+        description:landed?(demoPractice?'You landed on a gold pad. Pick a flight plan to keep flying.':
+          'Now fly the same approach. Hold thrust to slow the fall and release to coast.'):impact.reason,
+        button:landed?(demoPractice?'Flight plan →':'Try it yourself →'):'Retry landing →',
+        action:landed?(demoPractice?exitDemo:practiseDemo):retry,
+        secondary:demoPractice?'Watch again':'Flight plan',
+        secondaryAction:demoPractice?openDemo:exitDemo
+      });
+      updateHud();
+      return;
+    }
     if (mode==='touchdown') {
       mode='landed';
       const {pad,grade,metrics,earned}=impact;
@@ -953,13 +1049,31 @@
     updateHud();
   }
 
+  function demoControls() {
+    const pad=pads[0];
+    const dx=pad.x+pad.w/2-ship.x;
+    const altitude=pad.y-ship.y-20;
+    const targetLateral=clamp(dx*.43,-29,29);
+    const lateral=clamp((targetLateral-ship.vx)*2.6,-25,25);
+    const targetDescent=clamp(Math.sqrt(Math.max(0,altitude)*36)-5,9,46);
+    const lift=clamp(gravity()+(ship.vy-targetDescent)*4,0,60);
+    const level=altitude<39 && Math.abs(dx)<43 && Math.abs(ship.vx)<12;
+    const targetAngle=level?0:clamp(Math.atan2(lateral,Math.max(lift,gravity())),-.47,.47);
+    const angleError=targetAngle-ship.a-ship.spin/17;
+    demoSteer=Math.abs(angleError)>.014?Math.sign(angleError):0;
+    const throttle=clamp(Math.hypot(level?0:lateral,lift)/63,0,1);
+    demoThrust=(Math.round(flightTime/STEP)%30)/30<throttle;
+  }
+
   function updateFlight(dt) {
     flightTime+=dt;
-    const steer=Number(held('right'))-Number(held('left'));
+    const automatic=missionId==='demo' && !demoPractice;
+    if (automatic) demoControls();
+    const steer=automatic?demoSteer:Number(held('right'))-Number(held('left'));
     ship.spin += (steer*2.65-ship.spin)*(1-Math.exp(-dt*(steer?12:17)));
     ship.a += ship.spin*dt;
     ship.a = Math.atan2(Math.sin(ship.a),Math.cos(ship.a));
-    const firing=held('thrust') && ship.fuel>0;
+    const firing=(automatic?demoThrust:held('thrust')) && ship.fuel>0;
     ship.flame += ((firing?1:0)-ship.flame)*(1-Math.exp(-dt*(firing?15:20)));
     const burn=Math.min(ship.fuel,config().burn*dt);
     const impulse=firing ? 63*ship.flame*burn/config().burn : 0;
@@ -986,7 +1100,7 @@
       const speed=70+Math.random()*90;
       emit('jet',jet.x,jet.y,ship.vx-Math.sin(ship.a)*speed+(Math.random()-.5)*40,
         ship.vy+Math.cos(ship.a)*speed,.18+Math.random()*.24,1+Math.random()*2.4);
-      const floor=floorAt(jet.x);
+      const floor=floorAt(jet.x,flightTime,jet.y);
       if (Math.abs(ship.a)<.85 && floor-jet.y<83 && Math.random()<.45) {
         scatter('dust',1,jet.x-Math.sin(ship.a)*(floor-jet.y)*.7,floor-1,52);
       }
@@ -1021,7 +1135,7 @@
       p.x+=p.vx*motion;
       p.y+=p.vy*motion;
       if (p.kind!=='jet') p.vy+=18*motion;
-      if (p.y>floorAt(p.x)+1) p.age=p.life;
+      if (p.y>floorAt(p.x,flightTime,p.y)+1) p.age=p.life;
     }
     particles=particles.filter(p=>p.age<p.life);
   }
@@ -1052,6 +1166,29 @@
     ctx.globalAlpha=.12;ctx.beginPath();ctx.ellipse(0,0,radius*1.66,14,0,0,Math.PI*2);ctx.stroke();
     ctx.restore();
   }
+  function drawDemoOutcrops(theme) {
+    const stone=ctx.createLinearGradient(0,445,0,589);
+    stone.addColorStop(0,'#253e45');
+    stone.addColorStop(1,theme.base);
+    ctx.save();
+    for (const polygon of demoMission.outcrops) {
+      ctx.beginPath();
+      polygon.forEach(([x,y],index)=>index?ctx.lineTo(x,y):ctx.moveTo(x,y));
+      ctx.closePath();
+      ctx.fillStyle=stone;ctx.fill();
+      ctx.strokeStyle=theme.ridge;ctx.lineWidth=1.6;ctx.stroke();
+      ctx.save();ctx.clip();
+      ctx.globalAlpha=.24;ctx.lineWidth=.85;
+      for (let y=468;y<590;y+=13) {
+        ctx.beginPath();
+        for (let x=530;x<=955;x+=14) ctx.lineTo(x,y+2.7*Math.sin(x*.12+y));
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
   function drawTerrain(){
     const {theme,marker}=mission();
     // Deep-space silhouette: distinct layers of mountainous relief.
@@ -1096,6 +1233,7 @@
     ctx.beginPath();ctx.moveTo(terrain[0].x,terrain[0].y);
     for(let i=1;i<terrain.length;i++)ctx.lineTo(terrain[i].x,terrain[i].y);
     ctx.stroke();ctx.restore();
+    if (missionId==='demo') drawDemoOutcrops(theme);
     ctx.save();
     ctx.strokeStyle='#a2b9c398';ctx.lineWidth=1;
     ctx.setLineDash([3,4]);
@@ -1210,6 +1348,13 @@
     map.beginPath();map.moveTo(x(0),y(terrain[0].y));
     for (const p of terrain) map.lineTo(x(p.x),y(p.y));
     map.strokeStyle='#82baa9';map.lineWidth=1;map.stroke();
+    if (missionId==='demo') {
+      for (const polygon of demoMission.outcrops) {
+        map.beginPath();
+        polygon.forEach(([px,py],index)=>index?map.lineTo(x(px),y(py)):map.moveTo(x(px),y(py)));
+        map.closePath();map.stroke();
+      }
+    }
     map.font='700 8px ui-monospace,monospace';map.textAlign='center';
     const {marker}=mission();
     map.fillStyle='#a9bdbe';map.fillText(marker.short,x(marker.x),y(marker.y)-4);
@@ -1262,6 +1407,21 @@
   }
 
   function updateScoreboard() {
+    if (missionId==='demo') {
+      setText(ui.scoreLabel,'Training');
+      setText(ui.score,'—');
+      setText(ui.bestLabel,'Best score');
+      setText(ui.best,'—');
+      setText(ui.scoreCompactLabel,'DEMO');
+      setText(ui.scoreCompact,'—');
+      setText(ui.bestCompact,'—');
+      setText(ui.progressLabel,'Flight');
+      setText(ui.scoreProgress,demoPractice?'Practice':'Demo');
+      ui.scoreEvent.dataset.outcome='';
+      setText(ui.scoreEvent,demoPractice?'Your turn':'Watch the landing');
+      setText(ui.scoreNote,'Training flights are unscored.');
+      return;
+    }
     const isCampaign=selection==='campaign';
     const isDaily=missionId==='daily';
     const total=campaign?campaignTotal():score;
@@ -1305,7 +1465,7 @@
 
   function updateHud() {
     if (!ship) return;
-    const altitude=Math.max(0,Math.round(floorAt(ship.x)-(ship.y+20-ship.compression)));
+    const altitude=Math.max(0,Math.round(floorAt(ship.x,flightTime,ship.y+20-ship.compression)-(ship.y+20-ship.compression)));
     const low=ship.fuel<=24;
     const {name,vertical,lateral}=config();
     setText(ui.fuel,Math.ceil(ship.fuel));
@@ -1325,7 +1485,8 @@
     ui.horizontalBox.classList.toggle('warning',(ship.x-mission().approach)*(mission().direction || 1)>=0 && Math.abs(lateralSpeed)>lateral);
     setText(ui.estimate,mode==='playing'?projection?.label || '—':'—');
     ui.estimate.className='stat-value '+(mode==='playing'?projection?.kind || '':'');
-    setText(ui.sectorName,missionId==='daily'?'DAILY DESCENT':(sectorIndex()+1)+'/'+sectorOrder.length+' · '+mission().name.toUpperCase());
+    updateDemoCoach(altitude);
+    setText(ui.sectorName,missionId==='demo'?'GUIDED LANDING':missionId==='daily'?'DAILY DESCENT':(sectorIndex()+1)+'/'+sectorOrder.length+' · '+mission().name.toUpperCase());
     setText(ui.terrainName,mission().location);
     ui.beaconBtn.disabled=mode!=='playing';
     ui.beaconBtn.dataset.signal=mode==='playing'?beacon.signal:'off';
@@ -1342,6 +1503,24 @@
     setText(ui.pauseBtn,mode==='paused'?'▶ Resume':'Ⅱ Pause');
   }
 
+  function updateDemoCoach(altitude) {
+    ui.demoCoach.hidden=missionId!=='demo' || mode!=='playing';
+    if (ui.demoCoach.hidden) return;
+    if (flightTime<2.3) {
+      setText(ui.demoStep,'1 / STEER');
+      setText(ui.demoInstruction,'Tilt and thrust to move toward Alpha.');
+    } else if (altitude>105) {
+      setText(ui.demoStep,'2 / BRAKE');
+      setText(ui.demoInstruction,'Tilt against your drift, then straighten up.');
+    } else {
+      setText(ui.demoStep,'3 / TOUCH DOWN');
+      setText(ui.demoInstruction,'Stay upright. Use short burns to slow the fall.');
+    }
+    const thrust=demoPractice?held('thrust'):demoThrust;
+    const steer=demoPractice?Number(held('right'))-Number(held('left')):demoSteer;
+    setText(ui.demoInput,[steer<0?'◀ LEFT':steer>0?'RIGHT ▶':'',thrust?'▲ THRUST':'COAST'].filter(Boolean).join(' · '));
+  }
+
   function frame(ms) {
     const dt=lastFrame===null?0:Math.min(.10,(ms-lastFrame)/1000);
     lastFrame=ms;
@@ -1352,7 +1531,8 @@
     }
     if (mode==='playing') {
       projection=projectTouchdown();
-      setEngine(held('thrust') && ship.fuel>0?ship.flame:0);
+      const thrust=missionId==='demo' && !demoPractice?demoThrust:held('thrust');
+      setEngine(thrust && ship.fuel>0?ship.flame:0);
       updateBeacon(dt);
       updateHud();
     }
@@ -1562,7 +1742,7 @@
         (e.code==='Space' || (e.code==='Enter' && e.target!==ui.mainAction))) return;
     if (actions[e.code] && mode==='playing') {
       e.preventDefault();
-      if (!heldKeys.has(e.code)) {
+      if (acceptsManualInput() && !heldKeys.has(e.code)) {
         heldKeys.add(e.code);
         initialiseAudio();
       }
@@ -1600,22 +1780,76 @@
     accumulator=0;
   });
 
+  function syncButtons() {
+    const pressed=Array.from(touches.values());
+    for (const [action,button] of Object.entries(touchButtons)) {
+      button.classList.toggle('active',pressed.includes(action));
+    }
+  }
+
+  function releaseTouches(event) {
+    // Safari can end a contact outside the button, including during a system gesture.
+    const active=new Set(Array.from(event.touches,touch=>'touch-'+touch.identifier));
+    for (const key of touches.keys()) {
+      if (typeof key==='string' && !active.has(key)) touches.delete(key);
+    }
+    syncButtons();
+  }
+
+  function releasePointer(event) {
+    if (touches.delete(event.pointerId)) syncButtons();
+  }
+
+  window.addEventListener('touchmove',event=>{
+    let changed=false;
+    for (const touch of Array.from(event.changedTouches)) {
+      const key='touch-'+touch.identifier;
+      const action=touches.get(key);
+      if (!action) continue;
+      const rect=touchButtons[action].getBoundingClientRect();
+      if (touch.clientX<rect.left || touch.clientX>rect.right ||
+          touch.clientY<rect.top || touch.clientY>rect.bottom) {
+        touches.delete(key);
+        changed=true;
+      }
+    }
+    if (changed) syncButtons();
+  },true);
+  window.addEventListener('touchend',releaseTouches,true);
+  window.addEventListener('touchcancel',releaseTouches,true);
+  window.addEventListener('pointerup',releasePointer,true);
+  window.addEventListener('pointercancel',releasePointer,true);
+  window.addEventListener('pointermove',event=>{
+    if (!event.buttons) releasePointer(event);
+  },true);
+  window.addEventListener('pagehide',()=>{
+    clearInputs();
+    setEngine(0);
+    silenceBeacon();
+  });
+
+  function acceptsManualInput() {
+    return mode==='playing' && (missionId!=='demo' || demoPractice);
+  }
+
   for (const [action,button] of Object.entries(touchButtons)) {
-    button.addEventListener('pointerdown',e=>{
-      if (mode!=='playing' || e.button!==0) return;
-      e.preventDefault();
-      button.setPointerCapture(e.pointerId);
-      touches.set(e.pointerId,action);
-      button.classList.add('active');
+    button.addEventListener('touchstart',event=>{
+      if (!acceptsManualInput()) return;
+      event.preventDefault();
+      for (const touch of Array.from(event.changedTouches)) touches.set('touch-'+touch.identifier,action);
+      syncButtons();
+      initialiseAudio();
+    },{passive:false});
+    button.addEventListener('pointerdown',event=>{
+      if (!acceptsManualInput() || event.pointerType==='touch' || event.button!==0) return;
+      event.preventDefault();
+      try { button.setPointerCapture(event.pointerId); } catch {}
+      touches.set(event.pointerId,action);
+      syncButtons();
       initialiseAudio();
     });
-    const release=e=>{
-      touches.delete(e.pointerId);
-      button.classList.toggle('active',Array.from(touches.values()).includes(action));
-    };
-    button.addEventListener('pointerup',release);
-    button.addEventListener('pointercancel',release);
-    button.addEventListener('lostpointercapture',release);
+    button.addEventListener('lostpointercapture',releasePointer);
+    button.addEventListener('contextmenu',event=>event.preventDefault());
   }
 
   ui.soundBtn.addEventListener('click',()=>{
@@ -1634,6 +1868,10 @@
   ui.beaconBtn.addEventListener('click',cycleBeacon);
   ui.missionSelect.addEventListener('change',()=>{
     if (mode!=='ready' || campaign || !validSelection(ui.missionSelect.value)) return;
+    if (ui.missionSelect.value==='demo') {
+      openDemo();
+      return;
+    }
     selection=ui.missionSelect.value;
     save(selectionKey,selection);
     setReady(false);

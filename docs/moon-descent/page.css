@@ -45,7 +45,7 @@ figcaption { padding:8px 12px; color:var(--muted); font:700 10px/1.5 var(--mono)
 .briefing p:not(.kicker),.essentials p { color:var(--muted); }
 .gallery { margin:24px 0; }
 .gallery h2 { margin-bottom:12px; }
-.gallery-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.gallery-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
 .gallery a { display:block; }
 .gallery a:focus-visible { outline-offset:-3px; }
 .essentials { margin-bottom:32px; }
